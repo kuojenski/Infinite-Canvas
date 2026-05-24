@@ -537,6 +537,39 @@
         .log-error { margin:0 0 7px; padding:7px 8px; border-radius:10px; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.22); color:#dc2626; font-size:11px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .log-thumbs { display:flex; gap:6px; align-items:flex-start; justify-content:flex-end; max-width:126px; flex-wrap:wrap; }
         .log-thumbs img, .log-thumbs video { width:38px; height:38px; object-fit:cover; border-radius:8px; border:1px solid var(--line); background:#0f172a; cursor:pointer; }
+        .prompt-library-modal { position:absolute; inset:0; z-index:78; display:none; align-items:center; justify-content:center; padding:28px; background:rgba(248,250,252,.42); backdrop-filter:blur(18px); }
+        .prompt-library-modal.open { display:flex; }
+        .prompt-library-panel { width:min(980px, 95vw); height:min(720px, 88vh); display:grid; grid-template-columns:minmax(0,1fr) 340px; border-radius:22px; background:var(--card-solid); border:1px solid var(--line); box-shadow:0 30px 90px rgba(15,23,42,.22); overflow:hidden; }
+        .prompt-library-main { min-width:0; display:flex; flex-direction:column; border-right:1px solid var(--line); }
+        .prompt-library-head { height:58px; flex:0 0 58px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 14px 0 18px; border-bottom:1px solid var(--line); }
+        .prompt-library-title { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:950; color:var(--text); }
+        .prompt-library-sub { margin-top:3px; color:var(--faint); font-size:11px; font-weight:700; }
+        .prompt-library-list { flex:1; min-height:0; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:9px; }
+        .prompt-library-card { border:1px solid var(--line); border-radius:16px; background:var(--soft); padding:11px; display:flex; flex-direction:column; gap:8px; }
+        .prompt-library-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+        .prompt-library-card-title { min-width:0; color:var(--text); font-size:12px; font-weight:900; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .prompt-library-card-meta { color:var(--faint); font-size:10px; font-weight:800; white-space:nowrap; }
+        .prompt-library-preview { color:var(--muted); font-size:11px; line-height:1.45; white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; user-select:text; }
+        .prompt-library-actions { display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+        .prompt-library-btn { height:30px; border-radius:999px; padding:0 10px; display:inline-flex; align-items:center; justify-content:center; gap:5px; color:var(--muted); background:var(--card-solid); border:1px solid var(--line); font-size:10.5px; font-weight:850; }
+        .prompt-library-btn.primary { color:var(--strong-text); background:var(--strong); border-color:var(--strong); }
+        .prompt-library-btn.danger { color:#dc2626; background:#fff5f5; border-color:#fecaca; }
+        .prompt-library-btn:hover { filter:brightness(.98); color:var(--text); }
+        .prompt-library-empty { flex:1; min-height:220px; border:1px dashed var(--line-2); border-radius:18px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--faint); text-align:center; font-size:12px; font-weight:750; }
+        .prompt-library-form { min-width:0; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--card-solid); }
+        .prompt-library-field { display:flex; flex-direction:column; gap:6px; min-width:0; }
+        .prompt-library-field span { color:var(--faint); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+        .prompt-library-field input,
+        .prompt-library-field textarea { width:100%; border:1px solid var(--line); border-radius:13px; outline:none; background:var(--soft); color:var(--text); font-size:12px; line-height:1.5; }
+        .prompt-library-field input { height:36px; padding:0 11px; font-weight:800; }
+        .prompt-library-field textarea { flex:1; min-height:260px; resize:none; padding:10px 11px; }
+        .prompt-library-form-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+        .prompt-library-source { margin-right:auto; }
+        @media (max-width: 760px) {
+            .prompt-library-panel { grid-template-columns:1fr; height:min(780px, 92vh); }
+            .prompt-library-main { border-right:0; border-bottom:1px solid var(--line); min-height:300px; }
+            .prompt-library-form { min-height:360px; }
+        }
         .model-modal { position:absolute; inset:0; z-index:70; display:none; align-items:center; justify-content:center; padding:28px; background:rgba(248,250,252,.42); backdrop-filter:blur(18px); }
         .model-modal.open { display:flex; }
         .error-modal { position:absolute; inset:0; z-index:90; display:none; align-items:center; justify-content:center; padding:28px; background:rgba(248,250,252,.42); backdrop-filter:blur(18px); }
@@ -698,6 +731,7 @@
         .theme-dark .output-pending-meta { color:#94a3b8; }
         .theme-dark .log-item.failed { background:rgba(127,29,29,.18); border-color:rgba(239,68,68,.42); }
         .theme-dark .log-error { color:#fca5a5; }
+        .theme-dark .prompt-library-btn.danger { background:rgba(127,29,29,.34); color:#fca5a5; border-color:rgba(239,68,68,.42); }
         .theme-dark .image-edit-panel { background:var(--card-solid); border-color:var(--line); }
         .theme-dark .image-edit-title { color:var(--text); }
         .theme-dark .image-edit-mode { background:var(--soft); border-color:var(--line); }
@@ -854,6 +888,7 @@
                 <div class="toolbar-items">
                     <button class="tool-btn" onclick="addImageNode()"><i data-lucide="image-plus" class="w-4 h-4"></i><span data-i18n="canvas.image">圖片</span></button>
                     <button class="tool-btn" onclick="addPromptNode()"><i data-lucide="text-cursor-input" class="w-4 h-4"></i><span data-i18n="canvas.prompt">提示詞</span></button>
+                    <button class="tool-btn" onclick="openPromptLibrary()"><i data-lucide="book-open" class="w-4 h-4"></i><span>提示詞庫</span></button>
                     <button class="tool-btn" onclick="addLoopNode()"><i data-lucide="repeat-2" class="w-4 h-4"></i><span data-i18n="canvas.loop">循環</span></button>
                     <button class="tool-btn" onclick="addGeneratorNode()"><i data-lucide="wand-sparkles" class="w-4 h-4"></i><span data-i18n="canvas.apiGenerate">API生成</span></button>
                     <button class="tool-btn" onclick="addMsGenNode()"><i data-lucide="cloud-lightning" class="w-4 h-4"></i><span data-i18n="canvas.msGenerate">MS生成</span></button>
@@ -971,6 +1006,35 @@
                     <button class="preview-icon-btn" type="button" onclick="closeCanvasLog()" title="關閉" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <div id="logList" class="log-list"></div>
+            </div>
+        </div>
+        <div id="promptLibraryModal" class="prompt-library-modal" onclick="closePromptLibrary()">
+            <div class="prompt-library-panel" onclick="event.stopPropagation()">
+                <section class="prompt-library-main">
+                    <div class="prompt-library-head">
+                        <div>
+                            <div class="prompt-library-title"><i data-lucide="book-open" class="w-4 h-4"></i><span>提示詞庫</span></div>
+                            <div id="promptLibrarySub" class="prompt-library-sub">保存常用提示詞，之後可以套用或新增到畫布。</div>
+                        </div>
+                        <button class="preview-icon-btn" type="button" onclick="closePromptLibrary()" title="關閉" aria-label="關閉"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    </div>
+                    <div id="promptLibraryList" class="prompt-library-list"></div>
+                </section>
+                <aside class="prompt-library-form">
+                    <label class="prompt-library-field">
+                        <span>名稱</span>
+                        <input id="promptLibraryName" type="text" maxlength="80" placeholder="例如：電商商品圖、寫實人像、空間設計">
+                    </label>
+                    <label class="prompt-library-field" style="flex:1">
+                        <span>提示詞內容</span>
+                        <textarea id="promptLibraryText" placeholder="貼上你常用、喜歡、想反覆調用的提示詞..."></textarea>
+                    </label>
+                    <div class="prompt-library-form-actions">
+                        <button class="prompt-library-btn prompt-library-source" type="button" onclick="fillPromptLibraryFromSelected()"><i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i><span>帶入選中提示詞</span></button>
+                        <button class="prompt-library-btn" type="button" onclick="clearPromptLibraryForm()">新增空白</button>
+                        <button id="promptLibrarySaveBtn" class="prompt-library-btn primary" type="button" onclick="savePromptLibraryEntry()"><i data-lucide="save" class="w-3.5 h-3.5"></i><span>保存</span></button>
+                    </div>
+                </aside>
             </div>
         </div>
         <div id="imageEditModal" class="image-edit-modal" onclick="closeImageEditor()">
@@ -1164,6 +1228,12 @@
         const outputRerunBtn = document.getElementById('outputRerunBtn');
         const logModal = document.getElementById('logModal');
         const logList = document.getElementById('logList');
+        const promptLibraryModal = document.getElementById('promptLibraryModal');
+        const promptLibraryList = document.getElementById('promptLibraryList');
+        const promptLibrarySub = document.getElementById('promptLibrarySub');
+        const promptLibraryName = document.getElementById('promptLibraryName');
+        const promptLibraryText = document.getElementById('promptLibraryText');
+        const promptLibrarySaveBtn = document.getElementById('promptLibrarySaveBtn');
         const errorModal = document.getElementById('errorModal');
         const errorTitle = document.getElementById('errorTitle');
         const errorMessage = document.getElementById('errorMessage');
@@ -1250,6 +1320,8 @@
         const cascadeRunningIds = new Set();
         const cascadeStopIds = new Set();
         const cascadeSerialIds = new Set(); // 記錄以串行循環模式啓動的運行，用於停止按鈕
+        let promptLibrary = [];
+        let editingPromptLibraryId = '';
         let cropState = null;
         let cropDrag = null;
         let imageEditMode = 'crop';
@@ -1295,6 +1367,7 @@
         const MANAGED_IMAGE_MODELS_KEY = 'canvas_image_models_ordered';
         const MANAGED_CHAT_MODELS_KEY = 'canvas_chat_models_ordered';
         const CANVAS_THEME_KEY = 'canvas_theme';
+        const PROMPT_LIBRARY_KEY = 'canvas_prompt_library_v1';
         const QUICK_TOOLBAR_COLLAPSED_KEY = 'canvas_quick_toolbar_collapsed';
         const DEFAULT_VIDEO_MODELS = [
             // Veo
@@ -1342,6 +1415,169 @@
             const next = !toolbar?.classList.contains('collapsed');
             localStorage.setItem(QUICK_TOOLBAR_COLLAPSED_KEY, next ? '1' : '0');
             applyQuickToolbarState();
+        }
+        function selectedPromptNode(){
+            if(selected.size !== 1) return null;
+            const id = [...selected][0];
+            const node = nodes.find(n => n.id === id);
+            return node?.type === 'prompt' ? node : null;
+        }
+        function loadPromptLibrary(){
+            try {
+                const raw = JSON.parse(localStorage.getItem(PROMPT_LIBRARY_KEY) || '[]');
+                promptLibrary = Array.isArray(raw)
+                    ? raw.filter(item => item && typeof item === 'object').map(item => ({
+                        id:/^[a-zA-Z0-9_-]+$/.test(String(item.id || '')) ? String(item.id) : uid('pl'),
+                        name:String(item.name || '').trim(),
+                        text:String(item.text || ''),
+                        updatedAt:Number(item.updatedAt || Date.now())
+                    })).filter(item => item.text.trim())
+                    : [];
+            } catch(e) {
+                promptLibrary = [];
+            }
+            return promptLibrary;
+        }
+        function savePromptLibrary(){
+            localStorage.setItem(PROMPT_LIBRARY_KEY, JSON.stringify(promptLibrary));
+        }
+        function promptLibraryDate(value){
+            try { return new Date(value || Date.now()).toLocaleDateString(langIsEn() ? 'en-US' : 'zh-TW'); }
+            catch(e) { return ''; }
+        }
+        function clearPromptLibraryForm(){
+            editingPromptLibraryId = '';
+            if(promptLibraryName) promptLibraryName.value = '';
+            if(promptLibraryText) promptLibraryText.value = '';
+            if(promptLibrarySaveBtn) promptLibrarySaveBtn.querySelector('span').textContent = '保存';
+            promptLibraryName?.focus();
+        }
+        function renderPromptLibrary(){
+            if(!promptLibraryList) return;
+            const selectedPrompt = selectedPromptNode();
+            if(promptLibrarySub){
+                promptLibrarySub.textContent = selectedPrompt
+                    ? '已選中一個提示詞節點，可以直接套用或保存。'
+                    : '保存常用提示詞，之後可以套用或新增到畫布。';
+            }
+            const entries = [...promptLibrary].sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+            promptLibraryList.innerHTML = entries.length ? entries.map(item => `
+                <article class="prompt-library-card">
+                    <div class="prompt-library-card-head">
+                        <div class="prompt-library-card-title" title="${escapeAttr(item.name || '未命名提示詞')}">${escapeHtml(item.name || '未命名提示詞')}</div>
+                        <div class="prompt-library-card-meta">${escapeHtml(promptLibraryDate(item.updatedAt))}</div>
+                    </div>
+                    <div class="prompt-library-preview">${escapeHtml(item.text)}</div>
+                    <div class="prompt-library-actions">
+                        <button class="prompt-library-btn primary" type="button" onclick="usePromptLibraryEntry('${escapeAttr(item.id)}', 'apply')"><i data-lucide="replace" class="w-3.5 h-3.5"></i><span>套用</span></button>
+                        <button class="prompt-library-btn" type="button" onclick="usePromptLibraryEntry('${escapeAttr(item.id)}', 'new')"><i data-lucide="plus" class="w-3.5 h-3.5"></i><span>新增到畫布</span></button>
+                        <button class="prompt-library-btn" type="button" onclick="editPromptLibraryEntry('${escapeAttr(item.id)}')"><i data-lucide="pencil" class="w-3.5 h-3.5"></i><span>編輯</span></button>
+                        <button class="prompt-library-btn danger" type="button" onclick="deletePromptLibraryEntry('${escapeAttr(item.id)}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>刪除</span></button>
+                    </div>
+                </article>
+            `).join('') : `
+                <div class="prompt-library-empty">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                    <div>還沒有保存任何提示詞</div>
+                    <div style="font-size:11px;font-weight:650">右側填入名稱與內容後按保存，或先選中畫布上的提示詞節點再帶入。</div>
+                </div>
+            `;
+            refreshIcons();
+        }
+        function openPromptLibrary(){
+            loadPromptLibrary();
+            clearPromptLibraryForm();
+            const selectedPrompt = selectedPromptNode();
+            if(selectedPrompt?.text?.trim()){
+                promptLibraryName.value = (selectedPrompt.text || '').trim().split(/\n+/)[0].slice(0, 40);
+                promptLibraryText.value = selectedPrompt.text || '';
+            }
+            renderPromptLibrary();
+            promptLibraryModal?.classList.add('open');
+            refreshIcons();
+        }
+        function closePromptLibrary(){
+            promptLibraryModal?.classList.remove('open');
+        }
+        function fillPromptLibraryFromSelected(){
+            const node = selectedPromptNode();
+            if(!node?.text?.trim()){
+                alert('請先選中一個有內容的提示詞節點。');
+                return;
+            }
+            promptLibraryName.value = node.text.trim().split(/\n+/)[0].slice(0, 40);
+            promptLibraryText.value = node.text;
+            promptLibraryText.focus();
+        }
+        function savePromptLibraryEntry(){
+            const text = (promptLibraryText?.value || '').trim();
+            let name = (promptLibraryName?.value || '').trim();
+            if(!text){
+                alert('請先填入提示詞內容。');
+                promptLibraryText?.focus();
+                return;
+            }
+            if(!name) name = text.split(/\n+/)[0].slice(0, 40) || '未命名提示詞';
+            const now = Date.now();
+            const existing = editingPromptLibraryId ? promptLibrary.find(item => item.id === editingPromptLibraryId) : null;
+            if(existing){
+                existing.name = name;
+                existing.text = text;
+                existing.updatedAt = now;
+            } else {
+                promptLibrary.unshift({id:uid('pl'), name, text, updatedAt:now});
+            }
+            savePromptLibrary();
+            clearPromptLibraryForm();
+            renderPromptLibrary();
+        }
+        function editPromptLibraryEntry(id){
+            const item = promptLibrary.find(entry => entry.id === id);
+            if(!item) return;
+            editingPromptLibraryId = id;
+            promptLibraryName.value = item.name || '';
+            promptLibraryText.value = item.text || '';
+            if(promptLibrarySaveBtn) promptLibrarySaveBtn.querySelector('span').textContent = '更新';
+            promptLibraryName.focus();
+        }
+        function deletePromptLibraryEntry(id){
+            const item = promptLibrary.find(entry => entry.id === id);
+            if(!item) return;
+            if(!confirm(`確定刪除「${item.name || '未命名提示詞'}」？`)) return;
+            promptLibrary = promptLibrary.filter(entry => entry.id !== id);
+            savePromptLibrary();
+            if(editingPromptLibraryId === id) clearPromptLibraryForm();
+            renderPromptLibrary();
+        }
+        function usePromptLibraryEntry(id, mode='apply'){
+            const item = promptLibrary.find(entry => entry.id === id);
+            if(!item) return;
+            if(mode === 'new'){
+                const p = defaultPoint(0, 0);
+                const node = addPromptNode(p);
+                if(node){
+                    node.text = item.text || '';
+                    selected.clear();
+                    selected.add(node.id);
+                    render();
+                    scheduleSave();
+                    syncGeneratorInputs();
+                    refreshGeneratorInputViews();
+                }
+                closePromptLibrary();
+                return;
+            }
+            const node = selectedPromptNode();
+            if(!node){
+                usePromptLibraryEntry(id, 'new');
+                return;
+            }
+            node.text = item.text || '';
+            render();
+            scheduleSave();
+            syncGeneratorInputs();
+            refreshGeneratorInputViews();
+            closePromptLibrary();
         }
         function loadLocalModelLists(){
             try {

@@ -178,6 +178,7 @@ curl -I https://canvas.qwenr.com/
   - 原因：`static/canvas.html` 仍有 `addGeneratorNode()` 與 `generator` 節點邏輯，但上方快捷工具列和新增選單漏掉 API 生成按鈕，使用者只能看到 `MS生成`、`視頻生成`、`ComfyUI` 等入口。
   - 修正：在快捷工具列補回 `API生成`，並在右鍵/新增選單補回 `API生成`，都接到既有 `generator` 節點。
   - 驗證：用靜態 HTTP server 開啟 `http://127.0.0.1:8000/static/canvas.html`，確認 `#quickToolbar` 與 `#createMenu` DOM 都包含 `API生成`。完整 FastAPI 本機驗證未完成，因全域 Python 的 FastAPI/Pydantic 版本不相容、專案內嵌 Python 缺 `requests`。
-  - commit：待建立。
-  - 已推到 GitHub：待確認。
-  - 已部署 VPS：待確認。
+  - commit：`5deb47b Restore API generate canvas entry`
+  - 已推到 GitHub：是。
+  - 已部署 VPS：是，已只同步 `static/canvas.html` 到 `/opt/canvas/app/static/canvas.html` 並執行 `docker compose up -d --build`。
+  - 線上驗證：`canvas-infinite-app` healthy；`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `/app/static/canvas.html` 第 858 與 913 行都包含 `API生成`。

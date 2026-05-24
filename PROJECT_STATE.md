@@ -187,6 +187,7 @@ curl -I https://canvas.qwenr.com/
   - 原因：使用者覺得細節增強頁對目前工作流沒有用，左側按鈕和該頁面入口都可以不要。
   - 修正：從 `static/index.html` 移除左側「細節增強」導覽項、`frame-enhance` iframe，以及 `PAGE_IDS` 中的 `enhance`，讓舊的 localStorage enhance 狀態回到預設 `online`。
   - 注意：未刪除 `static/enhance.html` 檔案，也未移除畫布內 ComfyUI 的細節增強模式，避免誤傷底層 workflow 或既有未提交變更。
-  - commit：待建立。
-  - 已推到 GitHub：待確認。
-  - 已部署 VPS：待確認。
+  - commit：`0b41736 Remove standalone enhance page entry`
+  - 已推到 GitHub：是。
+  - 已部署 VPS：是，已只同步 `static/index.html` 到 `/opt/canvas/app/static/index.html` 並執行 `docker compose up -d --build`。
+  - 線上驗證：`canvas-infinite-app` healthy；`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `/app/static/index.html` 已找不到 `frame-enhance` 與 `nav.enhance`，`PAGE_IDS` 為 `['angle','online','canvas','api-settings','comfyui-settings']`。

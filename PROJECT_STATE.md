@@ -196,7 +196,7 @@ curl -I https://canvas.qwenr.com/
   - 目標：讓使用者可保存常用提示詞，日後用名稱辨識、編輯、刪除，並可套用到選中的提示詞節點或新增成新的提示詞節點。
   - 修正：在 `static/canvas.html` 快捷工具列新增「提示詞庫」按鈕，加入提示詞庫 modal、列表、名稱/內容表單，以及保存、編輯、刪除、套用、新增到畫布等前端流程。
   - 儲存：目前使用瀏覽器 `localStorage` 的 `canvas_prompt_library_v1`，屬於同一瀏覽器本機保存；尚未接後端帳號同步。
-  - commit：待提交。
-  - 已推到 GitHub：待推送。
-  - 已部署 VPS：待部署。
-  - 驗證：待完成。
+  - commit：`972c3f8 Add canvas prompt library`
+  - 已推到 GitHub：是。
+  - 已部署 VPS：是，已只同步 `static/canvas.html` 到 `/opt/canvas/app/static/canvas.html` 並執行 `docker compose up -d --build`。
+  - 驗證：本地 Playwright 靜態頁測試確認「提示詞庫」按鈕、modal、保存、localStorage、列表卡片與「套用 / 新增到畫布 / 編輯 / 刪除」按鈕可渲染；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`，容器內 `/app/static/canvas.html` 已包含 `promptLibraryModal`、`PROMPT_LIBRARY_KEY` 與「提示詞庫」。

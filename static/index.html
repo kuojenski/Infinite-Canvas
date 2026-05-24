@@ -595,12 +595,6 @@
             </button>
 
             <nav>
-                <div class="nav-item" onclick="switchUI(this, 'enhance')">
-                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                    <span class="nav-text" data-i18n="nav.enhance">細節增強</span>
-                </div>
                 <div class="nav-item" onclick="switchUI(this, 'angle')">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -719,7 +713,6 @@
 
         <main class="stage">
             <iframe id="frame-zimage" data-src="/static/zimage.html?v=2026.05.22" scrolling="yes"></iframe>
-            <iframe id="frame-enhance" data-src="/static/enhance.html?v=2026.05.22" scrolling="yes"></iframe>
             <iframe id="frame-klein" data-src="/static/klein.html?v=2026.05.22" scrolling="yes"></iframe>
             <iframe id="frame-angle" data-src="/static/angle.html?v=2026.05.22" scrolling="yes"></iframe>
             <iframe id="frame-online" data-src="/static/online.html?v=2026.05.24.2" class="active" scrolling="yes"></iframe>
@@ -759,7 +752,7 @@
         const ACTIVE_PAGE_KEY = 'studio_active_page';
         const SIDEBAR_EXPANDED_KEY = 'studio_sidebar_expanded';
         const DEFAULT_PAGE_ID = 'online';
-        const PAGE_IDS = ['enhance','angle','online','canvas','api-settings','comfyui-settings'];
+        const PAGE_IDS = ['angle','online','canvas','api-settings','comfyui-settings'];
         let appInfo = { version:'', repo_url:'', version_url:'https://raw.githubusercontent.com/hero8152/Infinite-Canvas/main/VERSION' };
         const authUserTextEl = document.getElementById('auth-user-text');
         const logoutBtnEl = document.getElementById('logout-btn');

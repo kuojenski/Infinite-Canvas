@@ -99,7 +99,6 @@ git push origin main
 - `auth_workspace.py`：會員登入、註冊、session cookie、workspace/auth gating。
 - `static/index.html`：主入口與品牌呈現重點之一。
 - `static/login.html`：登入頁與品牌呈現重點之一。
-- `static/enhance.html`：細節增強頁，雲端生成路由容易跟 provider 設定有關。
 - `static/angle.html`：角度控制頁，雲端生成路由容易跟 provider 設定有關。
 - `static/api-settings.html`：API provider 管理頁。
 - `deploy/vps/docker-compose.yml`：VPS Docker/Caddy 部署設定。
@@ -122,7 +121,8 @@ git push origin main
 - 此專案曾經部署到 VPS，並以 `canvas.qwenr.com` 驗證過。
 - 此專案曾經加入會員登入門檻，不能隨便移除 auth gating。
 - 專案對外品牌曾改成 `kiki studio`，可見文字優先在 `static/index.html` 與 `static/login.html` 檢查。
-- 細節增強與角度控制曾經因前端硬接 ModelScope，導致不能使用使用者設定的 OpenRouter/provider。後續遇到雲端生圖接不到 OpenRouter 時，先查 `static/enhance.html`、`static/angle.html` 是否有走 `/api/config`、`/api/providers`、`/api/online-image`，不要直接假設後端壞掉。
+- 角度控制曾經因前端硬接 ModelScope，導致不能使用使用者設定的 OpenRouter/provider。後續遇到雲端生圖接不到 OpenRouter 時，先查 `static/angle.html` 是否有走 `/api/config`、`/api/providers`、`/api/online-image`，不要直接假設後端壞掉。
+- 2026-05-24 起，主介面已移除獨立「細節增強」頁與左側入口；`static/enhance.html` 檔案暫時未刪，避免誤傷既有未提交內容或底層 workflow，但不再從主頁導覽載入。
 
 ## 部署流程摘要
 
@@ -182,3 +182,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已只同步 `static/canvas.html` 到 `/opt/canvas/app/static/canvas.html` 並執行 `docker compose up -d --build`。
   - 線上驗證：`canvas-infinite-app` healthy；`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `/app/static/canvas.html` 第 858 與 913 行都包含 `API生成`。
+
+- 2026-05-24：移除主介面的獨立「細節增強」頁入口。
+  - 原因：使用者覺得細節增強頁對目前工作流沒有用，左側按鈕和該頁面入口都可以不要。
+  - 修正：從 `static/index.html` 移除左側「細節增強」導覽項、`frame-enhance` iframe，以及 `PAGE_IDS` 中的 `enhance`，讓舊的 localStorage enhance 狀態回到預設 `online`。
+  - 注意：未刪除 `static/enhance.html` 檔案，也未移除畫布內 ComfyUI 的細節增強模式，避免誤傷底層 workflow 或既有未提交變更。
+  - commit：待建立。
+  - 已推到 GitHub：待確認。
+  - 已部署 VPS：待確認。

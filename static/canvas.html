@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/static/images/logo.png" type="image/png">
-    <title>无限画布</title>
+    <title>無限畫布</title>
     <script>
         (function(){
             try {
@@ -110,9 +110,11 @@
         .node.sized { display:flex; flex-direction:column; }
         .node.selected { outline:2px solid var(--strong); outline-offset:2px; z-index:10; }
         .node:hover { z-index:5; }
-        .node-head { height:42px; flex:0 0 42px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 12px; border-bottom:1px solid var(--line); border-radius:21px 21px 0 0; overflow:hidden; cursor:move; }
+        .node-head { height:42px; flex:0 0 42px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 22px 0 12px; border-bottom:1px solid var(--line); border-radius:21px 21px 0 0; overflow:hidden; cursor:move; }
         .node-title { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
-        /* 一键运行级联状态徽章 */
+        .node-close-btn { margin-right:10px; }
+        .node-debug-badge { margin-top:8px; border:1px dashed rgba(100,116,139,.45); border-radius:9px; background:rgba(248,250,252,.85); color:#475569; font-size:10px; line-height:1.35; padding:5px 7px; white-space:pre-wrap; user-select:text; cursor:text; }
+        /* 一鍵運行級聯狀態徽章 */
         .node-run-status { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:6px; font-size:10px; font-weight:800; letter-spacing:.04em; }
         .node-run-status.queued { background:#e5e7eb; color:#6b7280; }
         .node-run-status.running { background:#dbeafe; color:#1d4ed8; }
@@ -125,7 +127,7 @@
         .node-run-status .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
         .node-run-status.running .dot { animation:nodeStatusPulse 1s ease-in-out infinite; }
         @keyframes nodeStatusPulse { 50% { opacity:.3; } }
-        /* 一键运行按钮（与 Run 按钮同款大小，仅在链尾节点显示） */
+        /* 一鍵運行按鈕（與 Run 按鈕同款大小，僅在鏈尾節點顯示） */
         .gen-run-row { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
         .gen-run-row .gen-btn,
         .gen-run-row .comfy-run { flex:0 0 40px; margin-top:0; }
@@ -143,7 +145,7 @@
         .gen-cascade-btn:disabled { opacity:.4; cursor:not-allowed; }
         .gen-cascade-stop { border-color:#ef4444; color:#ef4444; }
         .gen-cascade-stop:hover { background:#ef4444; color:#fff; border-color:#ef4444; }
-        /* 失败重试栏 */
+        /* 失敗重試欄 */
         .node-retry-bar { display:flex; gap:6px; align-items:center; margin-top:8px; padding:8px 10px; background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.3); border-radius:10px; font-size:11px; }
         body.theme-dark .node-retry-bar { background:rgba(239,68,68,.14); border-color:rgba(239,68,68,.4); }
         .node-retry-msg { flex:1; color:#dc2626; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; user-select:text; cursor:text; }
@@ -159,7 +161,7 @@
         .node:hover .resize-handle,.node.selected .resize-handle { opacity:1; }
         .resize-handle:hover { color:#111827; border-color:#cbd5e1; background:#fff; }
         .resize-handle::before { content:""; width:8px; height:8px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; }
-        /* 拖拽/缩放过程中禁止节点内部文本框抢占鼠标事件和文字选中 */
+        /* 拖拽/縮放過程中禁止節點內部文本框搶佔鼠標事件和文字選中 */
         body.canvas-node-drag * { user-select:none !important; }
         body.canvas-node-drag .node textarea,
         body.canvas-node-drag .node input,
@@ -343,8 +345,12 @@
         .output-grid video { display:block; width:100%; height:100%; object-fit:contain; border-radius:16px; border:1px solid #edf2f7; background:#0f172a; cursor:pointer; }
         .output-img-wrap:hover img { border-color:#94a3b8; }
         .output-video-badge { position:absolute; left:7px; bottom:7px; height:22px; padding:0 8px; border-radius:999px; display:flex; align-items:center; gap:4px; background:rgba(15,23,42,.78); color:#fff; font-size:10px; font-weight:800; pointer-events:none; }
-        .output-img-wrap.loading-wrap { width:100%; aspect-ratio:1; border-radius:16px; border:1px solid #edf2f7; background:#f8fafc; display:flex; align-items:center; justify-content:center; min-height:80px; }
-        .output-spinner { width:28px; height:28px; border:3px solid #e2e8f0; border-top-color:#94a3b8; border-radius:50%; animation:spin .8s linear infinite; }
+        .output-img-wrap.loading-wrap { width:100%; aspect-ratio:1; border-radius:16px; border:1px solid #edf2f7; background:#f8fafc; min-height:96px; padding:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+        .output-spinner { width:26px; height:26px; border:3px solid #e2e8f0; border-top-color:#94a3b8; border-radius:50%; animation:spin .8s linear infinite; }
+        .output-pending-stage { width:100%; max-width:170px; text-align:center; font-size:11px; line-height:1.35; color:#334155; font-weight:700; }
+        .output-pending-progress { width:100%; max-width:170px; height:7px; border-radius:999px; background:#e2e8f0; overflow:hidden; }
+        .output-pending-progress > span { display:block; height:100%; border-radius:999px; width:12%; background:linear-gradient(90deg, #3b82f6, #22c55e); transition:width .25s ease; }
+        .output-pending-meta { font-size:10px; color:#64748b; opacity:.9; text-align:center; min-height:14px; }
         .output-time-pill { position:absolute; top:7px; right:7px; min-width:38px; height:22px; padding:0 8px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:rgba(17,24,39,.86); color:#fff; font-size:10px; font-weight:900; z-index:3; pointer-events:none; box-shadow:0 6px 18px rgba(15,23,42,.18); }
         .output-time-pill.running { background:rgba(37,99,235,.9); }
         @keyframes spin { to { transform:rotate(360deg); } }
@@ -354,7 +360,7 @@
         .port.in { left:-29px; cursor:crosshair; }
         .port.out { right:-22px; }
         .node > .port { top:50%; }
-        /* 高大节点：端口固定在标题栏高度，避免落在节点中部难以点击 */
+        /* 高大節點：端口固定在標題欄高度，避免落在節點中部難以點擊 */
         .ltxDirector-node > .port,
         .comfy-node > .port,
         .generator-node > .port,
@@ -363,7 +369,13 @@
         .llm-node > .port {
             top:21px;
         }
-        .group-node,.promptGroup-node { min-width:260px; background:rgba(255,255,255,.96); border:1px solid #e8edf3; box-shadow:0 16px 42px rgba(15,23,42,.08); z-index:0; }
+        .group-node,.promptGroup-node { min-width:260px; background:rgba(255,255,255,.96); border:1px solid #e8edf3; box-shadow:0 16px 42px rgba(15,23,42,.08); z-index:0; pointer-events:none; }
+        /* group 永遠保持在內容層下面，避免 selected/hover 後整塊蓋住成員節點 */
+        .group-node:hover,.promptGroup-node:hover,.group-node.selected,.promptGroup-node.selected { z-index:1; }
+        .group-node .node-head,.promptGroup-node .node-head,
+        .group-node .port,.promptGroup-node .port,
+        .group-node .resize-handle,.promptGroup-node .resize-handle,
+        .group-node .node-close-btn,.promptGroup-node .node-close-btn { pointer-events:auto; }
         .group-node .node-head,.promptGroup-node .node-head { background:#fff; border-bottom:1px solid #f1f5f9; }
         .llm-node { width:420px; }
         .llm-body { display:flex; flex-direction:column; gap:10px; min-height:0; }
@@ -421,6 +433,9 @@
         .input-list { display:flex; align-items:flex-start; gap:8px; min-height:78px; overflow:auto; padding-bottom:2px; }
         .input-item { position:relative; width:72px; height:72px; flex:0 0 auto; border:1px solid #edf2f7; border-radius:16px; background:#f8fafc; padding:5px; font-size:10px; color:#475569; cursor:grab; display:flex; align-items:center; justify-content:center; }
         .video-input-item { height:auto; min-height:0; width:92px; padding-bottom:6px; flex-direction:column; justify-content:flex-start; gap:5px; }
+        .input-remove { position:absolute; top:5px; right:5px; width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0; background:rgba(255,255,255,.95); color:#64748b; font-size:12px; line-height:1; opacity:0; transition:opacity .14s var(--ease), color .14s var(--ease), border-color .14s var(--ease), background .14s var(--ease); z-index:3; }
+        .input-item:hover .input-remove { opacity:1; }
+        .input-remove:hover { color:#dc2626; border-color:#fecaca; background:#fff5f5; }
         .video-input-thumb { position:relative; width:72px; height:72px; flex:0 0 auto; }
         .video-input-thumb img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
         .input-item img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
@@ -620,6 +635,9 @@
         .theme-dark .llm-output,
         .theme-dark .model-row,
         .theme-dark .model-empty { background:var(--soft); border-color:var(--line); color:var(--muted); }
+        .theme-dark .node-debug-badge { background:rgba(15,23,42,.86); color:#cbd5e1; border-color:rgba(148,163,184,.36); }
+        .theme-dark .input-remove { background:rgba(15,23,42,.92); border-color:var(--line); color:#cbd5e1; }
+        .theme-dark .input-remove:hover { color:#fca5a5; border-color:#7f1d1d; background:rgba(127,29,29,.28); }
         .theme-dark .llm-pane-resizer::before { background:#475569; }
         .theme-dark .group-node,
         .theme-dark .promptGroup-node,
@@ -675,6 +693,9 @@
         body.theme-dark .output-img-wrap.loading-wrap { background:#0f172a; border-color:var(--line); color:var(--text); }
         .theme-dark .llm-output-copy { background:rgba(15,23,42,.86); border-color:var(--line); }
         .theme-dark .output-spinner { border-color:#334155; border-top-color:#cbd5e1; }
+        .theme-dark .output-pending-stage { color:#e2e8f0; }
+        .theme-dark .output-pending-progress { background:#334155; }
+        .theme-dark .output-pending-meta { color:#94a3b8; }
         .theme-dark .log-item.failed { background:rgba(127,29,29,.18); border-color:rgba(239,68,68,.42); }
         .theme-dark .log-error { color:#fca5a5; }
         .theme-dark .image-edit-panel { background:var(--card-solid); border-color:var(--line); }
@@ -752,7 +773,6 @@
         .secondary-btn { height:38px; padding:0 13px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#475569; border:1px solid #e8edf3; font-size:12px; font-weight:800; }
         .secondary-btn.active { background:#111827; color:#fff; border-color:#111827; }
         .canvas-gate.trash-mode #gateCreateBtn,
-        .canvas-gate.trash-mode #gateCreateSmartBtn { display:none; }
         .trash-note { display:none; margin-top:14px; padding:10px 12px; border-radius:12px; background:#fff8e6; color:#92400e; font-size:11px; line-height:1.35; font-weight:700; border:1px solid #fde68a; }
         .canvas-gate.trash-mode .trash-note { display:block; }
         .create-confirm,.create-cancel { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
@@ -822,30 +842,28 @@
     <div id="shell" class="shell no-canvas">
         <div class="topbar">
             <div class="panel canvas-nav">
-                <button id="backToManagerBtn" class="tool-btn" type="button" title="返回画布管理" aria-label="返回画布管理" data-i18n-title="canvas.backToManager"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                <button id="backToManagerBtn" class="tool-btn" type="button" title="返回畫布管理" aria-label="返回畫布管理" data-i18n-title="canvas.backToManager"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
                 <div class="canvas-nav-meta">
-                    <div id="currentCanvasTitle" class="current-canvas-title">未命名画布</div>
+                    <div id="currentCanvasTitle" class="current-canvas-title">未命名畫布</div>
                     <div id="currentCanvasTime" class="current-canvas-time">--</div>
                 </div>
-                <p id="saveState" style="display:none" data-i18n="canvas.chooseFirst">请选择或新建画布</p>
+                <p id="saveState" style="display:none" data-i18n="canvas.chooseFirst">請選擇或新建畫布</p>
             </div>
             <div id="quickToolbar" class="panel toolbar editor-only">
-                <button class="tool-btn toolbar-toggle" type="button" onclick="toggleQuickToolbar()" title="折叠快捷菜单" aria-label="折叠快捷菜单"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                <button class="tool-btn toolbar-toggle" type="button" onclick="toggleQuickToolbar()" title="摺疊快捷菜單" aria-label="摺疊快捷菜單"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                 <div class="toolbar-items">
-                    <button class="tool-btn" onclick="addImageNode()"><i data-lucide="image-plus" class="w-4 h-4"></i><span data-i18n="canvas.image">图片</span></button>
-                    <button class="tool-btn" onclick="addPromptNode()"><i data-lucide="text-cursor-input" class="w-4 h-4"></i><span data-i18n="canvas.prompt">提示词</span></button>
-                    <button class="tool-btn" onclick="addLoopNode()"><i data-lucide="repeat-2" class="w-4 h-4"></i><span data-i18n="canvas.loop">循环</span></button>
-                    <button class="tool-btn" onclick="addLLMNode()"><i data-lucide="message-square-text" class="w-4 h-4"></i>LLM</button>
-                    <button class="tool-btn" onclick="addGeneratorNode()"><i data-lucide="wand-sparkles" class="w-4 h-4"></i><span data-i18n="canvas.apiGenerate">API生成</span></button>
+                    <button class="tool-btn" onclick="addImageNode()"><i data-lucide="image-plus" class="w-4 h-4"></i><span data-i18n="canvas.image">圖片</span></button>
+                    <button class="tool-btn" onclick="addPromptNode()"><i data-lucide="text-cursor-input" class="w-4 h-4"></i><span data-i18n="canvas.prompt">提示詞</span></button>
+                    <button class="tool-btn" onclick="addLoopNode()"><i data-lucide="repeat-2" class="w-4 h-4"></i><span data-i18n="canvas.loop">循環</span></button>
                     <button class="tool-btn" onclick="addMsGenNode()"><i data-lucide="cloud-lightning" class="w-4 h-4"></i><span data-i18n="canvas.msGenerate">MS生成</span></button>
-                    <button class="tool-btn" onclick="addVideoNode()"><i data-lucide="clapperboard" class="w-4 h-4"></i><span data-i18n="canvas.videoGenerate">视频生成</span></button>
+                    <button class="tool-btn" onclick="addVideoNode()"><i data-lucide="clapperboard" class="w-4 h-4"></i><span data-i18n="canvas.videoGenerate">視頻生成</span></button>
                     <button class="tool-btn" onclick="addComfyNode()"><i data-lucide="workflow" class="w-4 h-4"></i>ComfyUI</button>
                     <button class="tool-btn" onclick="addLTXDirectorNode()"><i data-lucide="film" class="w-4 h-4"></i><span data-i18n="canvas.ltxDirector">LTX Director</span></button>
                     <button class="tool-btn" onclick="addOutputNode()"><i data-lucide="circle-dot" class="w-4 h-4"></i>Output</button>
-                    <button class="tool-btn" onclick="groupSelectedImages()"><i data-lucide="group" class="w-4 h-4"></i><span data-i18n="canvas.group">分组</span></button>
+                    <button class="tool-btn" onclick="groupSelectedImages()"><i data-lucide="group" class="w-4 h-4"></i><span data-i18n="canvas.group">分組</span></button>
                 </div>
                 <div class="toolbar-fixed">
-                    <button class="tool-btn toolbar-log" onclick="openCanvasLog()" title="日志" aria-label="日志" data-i18n-title="canvas.logs"><i data-lucide="list-todo" class="w-4 h-4"></i><span data-i18n="canvas.logs">日志</span></button>
+                    <button class="tool-btn toolbar-log" onclick="openCanvasLog()" title="日誌" aria-label="日誌" data-i18n-title="canvas.logs"><i data-lucide="list-todo" class="w-4 h-4"></i><span data-i18n="canvas.logs">日誌</span></button>
                 </div>
             </div>
         </div>
@@ -854,48 +872,45 @@
             <div class="gate-panel">
                 <div class="gate-head">
                     <div class="gate-head-text">
-                        <button id="gateBackBtn" class="gate-back-link" type="button"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span data-i18n="canvas.backToList">返回画布列表</span></button>
+                        <button id="gateBackBtn" class="gate-back-link" type="button"><i data-lucide="arrow-left" class="w-3.5 h-3.5"></i><span data-i18n="canvas.backToList">返回畫布列表</span></button>
                         <div class="gate-title-row">
-                            <div id="gateTitleText" class="gate-title">选择画布</div>
+                            <div id="gateTitleText" class="gate-title">選擇畫布</div>
                             <span id="gateCountPill" class="gate-count-pill">0</span>
                         </div>
-                        <div id="gateSubtitle" class="gate-subtitle">打开已有画布，或新建一个开始创作。</div>
+                        <div id="gateSubtitle" class="gate-subtitle">打開已有畫布，或新建一個開始創作。</div>
                     </div>
                     <div class="gate-head-actions">
                         <button id="gateRefreshBtn" class="gate-icon-btn" type="button" title="刷新列表" aria-label="刷新列表" data-i18n-title="canvas.refresh">
                             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         </button>
-                        <button id="gateTrashBtn" class="gate-icon-btn gate-trash-entry" type="button" title="打开回收站" aria-label="打开回收站" data-i18n-title="canvas.openTrash">
+                        <button id="gateTrashBtn" class="gate-icon-btn gate-trash-entry" type="button" title="打開回收站" aria-label="打開回收站" data-i18n-title="canvas.openTrash">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                             <span id="gateTrashCount" class="gate-trash-badge">0</span>
                         </button>
-                        <button id="gateCreateBtn" class="primary-btn" type="button"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="canvas.newCanvas">新建画布</span></button>
-                        <button id="gateCreateSmartBtn" class="smart-create-btn" type="button"><i data-lucide="sparkles" class="w-4 h-4"></i><span data-i18n="canvas.newSmartCanvas">新建智能画布</span></button>
+                        <button id="gateCreateBtn" class="primary-btn" type="button"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="canvas.newCanvas">新建畫布</span></button>
                     </div>
                 </div>
-                <div id="gateStatus" class="gate-status" data-i18n="canvas.loadingCanvases">正在加载画布列表...</div>
+                <div id="gateStatus" class="gate-status" data-i18n="canvas.loadingCanvases">正在加載畫布列表...</div>
                 <div class="gate-create-row">
-                    <input id="gateTitleInput" class="gate-name-input" type="text" maxlength="80" placeholder="新画布名称（可留空使用默认）" data-i18n-placeholder="canvas.newCanvasPlaceholder">
-                    <button id="gateConfirmBtn" class="create-confirm" type="button" title="确定" aria-label="确定" data-i18n-title="common.confirm"><i data-lucide="check" class="w-4 h-4"></i></button>
+                    <input id="gateTitleInput" class="gate-name-input" type="text" maxlength="80" placeholder="新畫布名稱（可留空使用默認）" data-i18n-placeholder="canvas.newCanvasPlaceholder">
+                    <button id="gateConfirmBtn" class="create-confirm" type="button" title="確定" aria-label="確定" data-i18n-title="common.confirm"><i data-lucide="check" class="w-4 h-4"></i></button>
                     <button id="gateCancelBtn" class="create-cancel" type="button" title="取消" aria-label="取消" data-i18n-title="common.cancel"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
-                <div class="trash-note"><i data-lucide="info" class="w-3.5 h-3.5 inline-block align-text-bottom mr-1"></i><span data-i18n="canvas.trashNote">回收站中的画布会在 30 天后自动清理。</span></div>
+                <div class="trash-note"><i data-lucide="info" class="w-3.5 h-3.5 inline-block align-text-bottom mr-1"></i><span data-i18n="canvas.trashNote">回收站中的畫布會在 30 天後自動清理。</span></div>
                 <div id="gateCanvasList" class="gate-list"></div>
             </div>
         </div>
 
         <div id="board" class="board editor-only">
-            <div id="dropOverlay" class="drop-overlay" data-i18n="canvas.dropImage">拖放图片到画布</div>
+            <div id="dropOverlay" class="drop-overlay" data-i18n="canvas.dropImage">拖放圖片到畫布</div>
             <div id="selectionBox" class="selection-box"></div>
             <div id="selectionHub" class="selection-hub"></div>
             <div id="createMenu" class="create-menu">
-                <button class="menu-btn" onclick="menuAdd('image')"><i data-lucide="image-plus" class="w-4 h-4"></i><span data-i18n="canvas.imageCard">图片卡片</span></button>
-                <button class="menu-btn" onclick="menuAdd('prompt')"><i data-lucide="text-cursor-input" class="w-4 h-4"></i><span data-i18n="canvas.prompt">提示词</span></button>
-                <button class="menu-btn" onclick="menuAdd('loop')"><i data-lucide="repeat-2" class="w-4 h-4"></i><span data-i18n="canvas.loopNode">循环节点</span></button>
-                <button class="menu-btn" onclick="menuAdd('llm')"><i data-lucide="message-square-text" class="w-4 h-4"></i><span data-i18n="canvas.llmNode">LLM 节点</span></button>
-                <button class="menu-btn" onclick="menuAdd('generator')"><i data-lucide="wand-sparkles" class="w-4 h-4"></i><span data-i18n="canvas.apiGenerate">API生成</span></button>
+                <button class="menu-btn" onclick="menuAdd('image')"><i data-lucide="image-plus" class="w-4 h-4"></i><span data-i18n="canvas.imageCard">圖片卡片</span></button>
+                <button class="menu-btn" onclick="menuAdd('prompt')"><i data-lucide="text-cursor-input" class="w-4 h-4"></i><span data-i18n="canvas.prompt">提示詞</span></button>
+                <button class="menu-btn" onclick="menuAdd('loop')"><i data-lucide="repeat-2" class="w-4 h-4"></i><span data-i18n="canvas.loopNode">循環節點</span></button>
                 <button class="menu-btn" onclick="menuAdd('msgen')"><i data-lucide="cloud-lightning" class="w-4 h-4"></i><span data-i18n="canvas.modelscopeGenerate">Modelscope生成</span></button>
-                <button class="menu-btn" onclick="menuAdd('video')"><i data-lucide="clapperboard" class="w-4 h-4"></i><span data-i18n="canvas.videoGenerateNode">视频生成</span></button>
+                <button class="menu-btn" onclick="menuAdd('video')"><i data-lucide="clapperboard" class="w-4 h-4"></i><span data-i18n="canvas.videoGenerateNode">視頻生成</span></button>
                 <button class="menu-btn" onclick="menuAdd('comfy')"><i data-lucide="workflow" class="w-4 h-4"></i><span data-i18n="canvas.comfyGenerate">ComfyUI 生成</span></button>
                 <button class="menu-btn" onclick="menuAdd('ltxDirector')"><i data-lucide="film" class="w-4 h-4"></i><span data-i18n="canvas.ltxDirector">LTX Director</span></button>
                 <button class="menu-btn" onclick="menuAdd('output')"><i data-lucide="circle-dot" class="w-4 h-4"></i>Output</button>
@@ -909,13 +924,13 @@
                 <div id="linkControls" class="link-controls"></div>
                 <div id="nodes"></div>
             </div>
-            <div id="minimap" class="minimap" title="导航地图">
+            <div id="minimap" class="minimap" title="導航地圖">
                 <div id="minimapContent" class="minimap-content">
                     <div id="minimapViewport" class="minimap-viewport"></div>
                 </div>
             </div>
         </div>
-        <div class="hint editor-only" data-i18n="canvas.hint">拖拽画布或按住滚轮移动，Ctrl 框选多选，拖动选中节点可一起移动。图片/提示词节点右下端口拖线到生成节点。</div>
+        <div class="hint editor-only" data-i18n="canvas.hint">拖拽畫布或按住滾輪移動，Ctrl 框選多選，拖動選中節點可一起移動。圖片/提示詞節點右下端口拖線到生成節點。</div>
         <div id="outputLightbox" class="output-lightbox" onclick="closeOutputLightbox()">
             <div id="outputLightboxShell" class="output-lightbox-shell" onclick="event.stopPropagation()">
             <div id="outputPreview" class="output-preview">
@@ -933,16 +948,16 @@
                 <div class="output-preview-bar">
                     <div id="outputResolution" class="output-resolution">--</div>
                     <div class="output-preview-actions">
-                        <button id="outputDownloadBtn" class="preview-icon-btn" type="button" title="下载" aria-label="下载" data-i18n-title="canvas.download"><i data-lucide="download" class="w-4 h-4"></i></button>
-                        <button class="preview-icon-btn" type="button" title="关闭" aria-label="关闭" onclick="closeOutputLightbox()" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        <button id="outputDownloadBtn" class="preview-icon-btn" type="button" title="下載" aria-label="下載" data-i18n-title="canvas.download"><i data-lucide="download" class="w-4 h-4"></i></button>
+                        <button class="preview-icon-btn" type="button" title="關閉" aria-label="關閉" onclick="closeOutputLightbox()" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
                 </div>
             </div>
             <div id="outputPromptPanel" class="output-prompt-panel">
                 <div id="outputPromptText" class="output-prompt-text"></div>
                 <div class="output-prompt-actions">
-                    <button id="outputCopyPromptBtn" class="preview-text-btn secondary" type="button"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span data-i18n="canvas.copyPrompt">复制提示词</span></button>
-                    <button id="outputRerunBtn" class="preview-text-btn" type="button"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span data-i18n="canvas.rerun">再次运行</span></button>
+                    <button id="outputCopyPromptBtn" class="preview-text-btn secondary" type="button"><i data-lucide="copy" class="w-3.5 h-3.5"></i><span data-i18n="canvas.copyPrompt">複製提示詞</span></button>
+                    <button id="outputRerunBtn" class="preview-text-btn" type="button"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span data-i18n="canvas.rerun">再次運行</span></button>
                 </div>
             </div>
             </div>
@@ -950,8 +965,8 @@
         <div id="logModal" class="log-modal" onclick="closeCanvasLog()">
             <div class="log-panel" onclick="event.stopPropagation()">
                 <div class="log-head">
-                    <div class="log-title" data-i18n="canvas.generationLogs">生成日志</div>
-                    <button class="preview-icon-btn" type="button" onclick="closeCanvasLog()" title="关闭" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <div class="log-title" data-i18n="canvas.generationLogs">生成日誌</div>
+                    <button class="preview-icon-btn" type="button" onclick="closeCanvasLog()" title="關閉" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <div id="logList" class="log-list"></div>
             </div>
@@ -960,39 +975,39 @@
             <div class="image-edit-panel" onclick="event.stopPropagation()">
                 <div class="image-edit-head">
                     <div>
-                        <div id="imageEditTitle" class="image-edit-title" data-i18n="canvas.editImage">编辑图片</div>
-                        <div id="imageEditSub" class="image-edit-sub" data-i18n="canvas.editImageSub">选择裁剪、遮罩或画笔模式</div>
+                        <div id="imageEditTitle" class="image-edit-title" data-i18n="canvas.editImage">編輯圖片</div>
+                        <div id="imageEditSub" class="image-edit-sub" data-i18n="canvas.editImageSub">選擇裁剪、遮罩或畫筆模式</div>
                     </div>
                     <div class="image-edit-mode">
                         <button type="button" data-image-edit-mode="crop" class="active"><i data-lucide="crop" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeCrop">裁剪</span></button>
                         <button type="button" data-image-edit-mode="mask"><i data-lucide="brush" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeMask">遮罩</span></button>
-                        <button type="button" data-image-edit-mode="brush"><i data-lucide="paintbrush" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeBrush">画笔</span></button>
-                        <button type="button" data-image-edit-mode="grid"><i data-lucide="grid-3x3" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeGrid">宫格切分</span></button>
+                        <button type="button" data-image-edit-mode="brush"><i data-lucide="paintbrush" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeBrush">畫筆</span></button>
+                        <button type="button" data-image-edit-mode="grid"><i data-lucide="grid-3x3" class="w-3.5 h-3.5"></i><span data-i18n="canvas.modeGrid">宮格切分</span></button>
                     </div>
-                    <button class="preview-icon-btn" type="button" onclick="closeImageEditor()" title="关闭" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button class="preview-icon-btn" type="button" onclick="closeImageEditor()" title="關閉" data-i18n-title="common.close"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <div id="imageMaskTools" class="image-edit-tools">
-                    <label><span data-i18n="canvas.brushSize">笔刷</span> <input id="maskBrushSize" type="range" min="4" max="160" value="42"></label>
-                    <button id="maskUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoEditDrawing()" title="撤销"><i data-lucide="undo-2" class="w-4 h-4"></i></button>
-                    <button id="maskRedoBtn" class="image-edit-btn secondary" type="button" onclick="redoEditDrawing()" title="恢复"><i data-lucide="redo-2" class="w-4 h-4"></i></button>
+                    <label><span data-i18n="canvas.brushSize">筆刷</span> <input id="maskBrushSize" type="range" min="4" max="160" value="42"></label>
+                    <button id="maskUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoEditDrawing()" title="撤銷"><i data-lucide="undo-2" class="w-4 h-4"></i></button>
+                    <button id="maskRedoBtn" class="image-edit-btn secondary" type="button" onclick="redoEditDrawing()" title="恢復"><i data-lucide="redo-2" class="w-4 h-4"></i></button>
                     <button class="image-edit-btn secondary" type="button" onclick="clearEditDrawing()"><i data-lucide="eraser" class="w-4 h-4"></i><span data-i18n="canvas.clear">清空</span></button>
-                    <span class="image-edit-sub" data-i18n="canvas.maskHint">白色区域为要编辑的遮罩</span>
+                    <span class="image-edit-sub" data-i18n="canvas.maskHint">白色區域爲要編輯的遮罩</span>
                 </div>
                 <div id="imageBrushTools" class="image-edit-tools">
-                    <button class="image-edit-btn primary" type="button" data-brush-tool="free" onclick="setBrushTool('free')" title="自由画笔"><i data-lucide="paintbrush" class="w-4 h-4"></i></button>
+                    <button class="image-edit-btn primary" type="button" data-brush-tool="free" onclick="setBrushTool('free')" title="自由畫筆"><i data-lucide="paintbrush" class="w-4 h-4"></i></button>
                     <button class="image-edit-btn secondary" type="button" data-brush-tool="rect" onclick="setBrushTool('rect')" title="矩形"><i data-lucide="square" class="w-4 h-4"></i></button>
-                    <button class="image-edit-btn secondary" type="button" data-brush-tool="ellipse" onclick="setBrushTool('ellipse')" title="椭圆"><i data-lucide="circle" class="w-4 h-4"></i></button>
-                    <button class="image-edit-btn secondary" type="button" data-brush-tool="label" onclick="setBrushTool('label')" title="数字标签"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
-                    <label><span data-i18n="canvas.color">颜色</span> <input id="paintBrushColor" type="color" value="#ff2d55"></label>
-                    <label><span data-i18n="canvas.brushSize">笔刷</span> <input id="paintBrushSize" type="range" min="2" max="80" value="14"></label>
-                    <button id="brushUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoEditDrawing()" title="撤销"><i data-lucide="undo-2" class="w-4 h-4"></i></button>
-                    <button id="brushRedoBtn" class="image-edit-btn secondary" type="button" onclick="redoEditDrawing()" title="恢复"><i data-lucide="redo-2" class="w-4 h-4"></i></button>
+                    <button class="image-edit-btn secondary" type="button" data-brush-tool="ellipse" onclick="setBrushTool('ellipse')" title="橢圓"><i data-lucide="circle" class="w-4 h-4"></i></button>
+                    <button class="image-edit-btn secondary" type="button" data-brush-tool="label" onclick="setBrushTool('label')" title="數字標籤"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                    <label><span data-i18n="canvas.color">顏色</span> <input id="paintBrushColor" type="color" value="#ff2d55"></label>
+                    <label><span data-i18n="canvas.brushSize">筆刷</span> <input id="paintBrushSize" type="range" min="2" max="80" value="14"></label>
+                    <button id="brushUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoEditDrawing()" title="撤銷"><i data-lucide="undo-2" class="w-4 h-4"></i></button>
+                    <button id="brushRedoBtn" class="image-edit-btn secondary" type="button" onclick="redoEditDrawing()" title="恢復"><i data-lucide="redo-2" class="w-4 h-4"></i></button>
                     <button class="image-edit-btn secondary" type="button" onclick="clearEditDrawing()"><i data-lucide="eraser" class="w-4 h-4"></i><span data-i18n="canvas.clear">清空</span></button>
                 </div>
                 <div id="imageGridTools" class="image-edit-tools">
-                    <button id="gridCustomToggle" class="image-edit-btn secondary" type="button" onclick="toggleGridCustomMode()" data-i18n="canvas.gridCustom" data-i18n-title="canvas.gridCustomTitle" title="自由放置切割线">自定义</button>
+                    <button id="gridCustomToggle" class="image-edit-btn secondary" type="button" onclick="toggleGridCustomMode()" data-i18n="canvas.gridCustom" data-i18n-title="canvas.gridCustomTitle" title="自由放置切割線">自定義</button>
                     <div class="grid-preset-row">
-                        <span class="image-edit-sub" data-i18n="canvas.gridPresets">预设</span>
+                        <span class="image-edit-sub" data-i18n="canvas.gridPresets">預設</span>
                         <button class="grid-preset-btn" type="button" onclick="applyGridPreset(1, 2)">1×2</button>
                         <button class="grid-preset-btn" type="button" onclick="applyGridPreset(2, 1)">2×1</button>
                         <button class="grid-preset-btn" type="button" onclick="applyGridPreset(2, 2)">2×2</button>
@@ -1001,16 +1016,16 @@
                         <button class="grid-preset-btn" type="button" onclick="applyGridPreset(3, 3)">3×3</button>
                     </div>
                     <span id="gridRegularControls" style="display:contents">
-                        <label><span data-i18n="canvas.gridHLines">横向线</span> <input id="gridHorizontalLines" type="number" min="0" max="20" value="2"></label>
-                        <label><span data-i18n="canvas.gridVLines">竖向线</span> <input id="gridVerticalLines" type="number" min="0" max="20" value="2"></label>
+                        <label><span data-i18n="canvas.gridHLines">橫向線</span> <input id="gridHorizontalLines" type="number" min="0" max="20" value="2"></label>
+                        <label><span data-i18n="canvas.gridVLines">豎向線</span> <input id="gridVerticalLines" type="number" min="0" max="20" value="2"></label>
                     </span>
                     <div id="gridCustomControls" style="display:none;align-items:center;gap:6px">
-                        <button id="gridOrientH" class="image-edit-btn primary" type="button" onclick="setGridCustomOrientation('h')" data-i18n="canvas.gridOrientH" data-i18n-title="canvas.gridOrientHTitle" title="点击图片放置水平线">水平</button>
-                        <button id="gridOrientV" class="image-edit-btn secondary" type="button" onclick="setGridCustomOrientation('v')" data-i18n="canvas.gridOrientV" data-i18n-title="canvas.gridOrientVTitle" title="点击图片放置竖直线">垂直</button>
-                        <button id="gridUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoGridCustomLine()" data-i18n-title="canvas.gridUndo" title="撤销上一条线" disabled style="opacity:.4"><i data-lucide="undo-2" class="w-3.5 h-3.5"></i></button>
-                        <button class="image-edit-btn secondary" type="button" onclick="clearGridCustomLines()" data-i18n-title="canvas.gridClearLines" title="清除所有自定义线"><i data-lucide="eraser" class="w-3.5 h-3.5"></i></button>
+                        <button id="gridOrientH" class="image-edit-btn primary" type="button" onclick="setGridCustomOrientation('h')" data-i18n="canvas.gridOrientH" data-i18n-title="canvas.gridOrientHTitle" title="點擊圖片放置水平線">水平</button>
+                        <button id="gridOrientV" class="image-edit-btn secondary" type="button" onclick="setGridCustomOrientation('v')" data-i18n="canvas.gridOrientV" data-i18n-title="canvas.gridOrientVTitle" title="點擊圖片放置豎直線">垂直</button>
+                        <button id="gridUndoBtn" class="image-edit-btn secondary" type="button" onclick="undoGridCustomLine()" data-i18n-title="canvas.gridUndo" title="撤銷上一條線" disabled style="opacity:.4"><i data-lucide="undo-2" class="w-3.5 h-3.5"></i></button>
+                        <button class="image-edit-btn secondary" type="button" onclick="clearGridCustomLines()" data-i18n-title="canvas.gridClearLines" title="清除所有自定義線"><i data-lucide="eraser" class="w-3.5 h-3.5"></i></button>
                     </div>
-                    <label class="grid-gap-control"><span data-i18n="canvas.gridGap">间隔(px)</span> <input id="gridGapSize" type="range" min="0" max="240" step="1" value="0"><span id="gridGapValue" class="grid-gap-value">0</span></label>
+                    <label class="grid-gap-control"><span data-i18n="canvas.gridGap">間隔(px)</span> <input id="gridGapSize" type="range" min="0" max="240" step="1" value="0"><span id="gridGapValue" class="grid-gap-value">0</span></label>
                     <span id="gridSplitCount" class="image-edit-sub"></span>
                 </div>
                 <div id="imageEditStage" class="image-edit-stage">
@@ -1025,23 +1040,23 @@
                     </div>
                 </div>
                 <div class="image-edit-actions">
-                    <span id="imageEditZoomLabel" style="color:#94a3b8;font-size:11px;font-weight:800;padding:0 4px;margin-right:auto;cursor:pointer;user-select:none" title="双击重置缩放" ondblclick="resetImageEditZoom()">100%</span>
+                    <span id="imageEditZoomLabel" style="color:#94a3b8;font-size:11px;font-weight:800;padding:0 4px;margin-right:auto;cursor:pointer;user-select:none" title="雙擊重置縮放" ondblclick="resetImageEditZoom()">100%</span>
                     <button class="image-edit-btn secondary" type="button" onclick="resetCropBox()"><i data-lucide="rotate-ccw" class="w-4 h-4"></i><span data-i18n="canvas.reset">重置</span></button>
                     <button class="image-edit-btn secondary" type="button" onclick="closeImageEditor()" data-i18n="common.cancel">取消</button>
-                    <button id="imageEditApplyBtn" class="image-edit-btn primary" type="button" onclick="applyImageEdit()"><i data-lucide="crop" class="w-4 h-4"></i><span data-i18n="canvas.applyCrop">应用裁剪</span></button>
+                    <button id="imageEditApplyBtn" class="image-edit-btn primary" type="button" onclick="applyImageEdit()"><i data-lucide="crop" class="w-4 h-4"></i><span data-i18n="canvas.applyCrop">應用裁剪</span></button>
                 </div>
             </div>
         </div>
         <div id="errorModal" class="error-modal" onclick="closeErrorModal()">
             <div class="error-panel" onclick="event.stopPropagation()">
                 <div class="error-head">
-                    <div id="errorTitle" class="error-title" data-i18n="canvas.generationFailed">生成失败</div>
-                    <button class="preview-icon-btn" type="button" title="关闭" aria-label="关闭" onclick="closeErrorModal()"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <div id="errorTitle" class="error-title" data-i18n="canvas.generationFailed">生成失敗</div>
+                    <button class="preview-icon-btn" type="button" title="關閉" aria-label="關閉" onclick="closeErrorModal()"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <div id="errorMessage" class="error-message"></div>
                 <div class="error-actions">
-                    <button class="error-btn" type="button" onclick="copyErrorMessage()"><i data-lucide="copy" class="w-4 h-4"></i><span>复制</span></button>
-                    <button class="error-btn primary" type="button" onclick="closeErrorModal()">关闭</button>
+                    <button class="error-btn" type="button" onclick="copyErrorMessage()"><i data-lucide="copy" class="w-4 h-4"></i><span>複製</span></button>
+                    <button class="error-btn primary" type="button" onclick="closeErrorModal()">關閉</button>
                 </div>
             </div>
         </div>
@@ -1057,9 +1072,17 @@
         function langIsEn(){ return window.StudioI18n?.lang?.() === 'en'; }
         function actionFailed(labelKey, detail=''){
             const label = tr(labelKey);
-            return langIsEn() ? `${label} failed${detail ? `: ${detail}` : ''}` : `${label}失败${detail ? `：${detail}` : ''}`;
+            return langIsEn() ? `${label} failed${detail ? `: ${detail}` : ''}` : `${label}失敗${detail ? `：${detail}` : ''}`;
         }
-        function noReturnedImage(labelKey){ return langIsEn() ? `${tr(labelKey)} failed: no image returned` : `${tr(labelKey)}失败：未返回图片`; }
+        function noReturnedImage(labelKey){ return langIsEn() ? `${tr(labelKey)} failed: no image returned` : `${tr(labelKey)}失敗：未返回圖片`; }
+        const DISABLED_CANVAS_NODE_TYPES = new Set(['generator', 'llm']);
+        const IMAGE_EDIT_ENABLED = false;
+        function isNodeTypeEnabled(type){
+            return !DISABLED_CANVAS_NODE_TYPES.has(String(type || '').trim());
+        }
+        function featureDisabledMessage(name){
+            return langIsEn() ? `${name} is disabled in this workspace` : `${name} 已停用`;
+        }
         function applyLanguage(lang){
             if(lang && window.StudioI18n) StudioI18n.set(lang);
             document.title = tr('canvas.title');
@@ -1074,7 +1097,7 @@
             if(event.data?.type === 'studio-lang') applyLanguage(event.data.lang);
             if(event.data?.type === 'canvas_updated') handleCanvasUpdatedMessage(event.data);
             if(event.data?.type === 'canvas-focus'){
-                // 从其他标签页切换回画布时，重新拉取工作流列表并刷新节点
+                // 從其他標籤頁切換回畫布時，重新拉取工作流列表並刷新節點
                 loadConfig().then(() => {
                     pruneMissingComfyWorkflows();
                     if(typeof render === 'function') render();
@@ -1109,7 +1132,6 @@
         const selectionHub = document.getElementById('selectionHub');
         const gateStatus = document.getElementById('gateStatus');
         const gateCreateBtn = document.getElementById('gateCreateBtn');
-        const gateCreateSmartBtn = document.getElementById('gateCreateSmartBtn');
         const gateRefreshBtn = document.getElementById('gateRefreshBtn');
         const gateBackBtn = document.getElementById('gateBackBtn');
         const gateTrashBtn = document.getElementById('gateTrashBtn');
@@ -1198,7 +1220,7 @@
             zimage:    { label: 'ZImage',     modelId: 'Tongyi-MAI/Z-Image-Turbo',            supportsImage: false, endpoint: '/generate'            },
             qwen_edit: { label: 'Qwen Edit',  modelId: 'Qwen/Qwen-Image-Edit-2511',            supportsImage: true,  endpoint: '/api/angle/generate'  },
             klein_edit:{ label: 'Klein',      modelId: 'black-forest-labs/FLUX.2-klein-9B',   supportsImage: true,  endpoint: '/api/ms/generate'     },
-            custom:    { label: '自定义', labelKey: 'canvas.custom', modelId: '',                acceptsImage: true,   endpoint: '/api/ms/generate'     }
+            custom:    { label: '自定義', labelKey: 'canvas.custom', modelId: '',                acceptsImage: true,   endpoint: '/api/ms/generate'     }
         };
         let hasManagedImageModels = false;
         let hasManagedChatModels = false;
@@ -1220,9 +1242,12 @@
         let lastMouseBoard = {x: 0, y: 0};
         let undoStack = [];
         const UNDO_MAX = 30;
+        const OUTPUT_DEBUG = true;
+        // 只隱藏前台 DBG 區塊，保留內部 debug 邏輯與 console 記錄供排錯使用。
+        const SHOW_DEBUG_BADGE = false;
         const cascadeRunningIds = new Set();
         const cascadeStopIds = new Set();
-        const cascadeSerialIds = new Set(); // 记录以串行循环模式启动的运行，用于停止按钮
+        const cascadeSerialIds = new Set(); // 記錄以串行循環模式啓動的運行，用於停止按鈕
         let cropState = null;
         let cropDrag = null;
         let imageEditMode = 'crop';
@@ -1234,21 +1259,21 @@
         let brushTool = 'free';
         let brushLabelCounter = 1;
         let gridCustomMode = false;
-        let gridCustomLines = []; // [{type:'h'|'v', pos:0-1}] 相对图片尺寸的分数位置
-        let gridCustomOrientation = 'h'; // 当前点击放置方向
-        let gridCustomHistory = []; // 撤销栈：每次放线前快照
+        let gridCustomLines = []; // [{type:'h'|'v', pos:0-1}] 相對圖片尺寸的分數位置
+        let gridCustomOrientation = 'h'; // 當前點擊放置方向
+        let gridCustomHistory = []; // 撤銷棧：每次放線前快照
         let gridCustomDrag = null; // {index, pointerId}
         let imageEditZoom = 1.0;
-        let imageEditBaseW = 0; // zoom=1 时图片显示宽度
+        let imageEditBaseW = 0; // zoom=1 時圖片顯示寬度
         let imageEditBaseH = 0;
         let textSelectionGuard = null;
         const PROMPT_TEXT_MAX_LENGTH = 20000;
         const CLIENT_ID = 'canvas_' + Math.random().toString(36).slice(2);
         const CANVAS_EMOJIS = ['layers','sparkles','image','palette','wand-2','star','heart','rocket','flame','moon','cloud','leaf','gem','compass','pin','flag','bookmark','crown'];
         function renderCanvasIcon(icon, size = 14) {
-            // 旧的默认 emoji 或空值都映射为 layers
+            // 舊的默認 emoji 或空值都映射爲 layers
             if(!icon || icon === '🧩') return `<i data-lucide="layers" style="width:${size}px;height:${size}px"></i>`;
-            // 含非 ASCII 字符（用户旧选过的 emoji）继续按文本渲染
+            // 含非 ASCII 字符（用戶舊選過的 emoji）繼續按文本渲染
             if(/[^\x00-\x7F]/.test(icon)) return escapeHtml(icon);
             return `<i data-lucide="${escapeHtml(icon)}" style="width:${size}px;height:${size}px"></i>`;
         }
@@ -1276,7 +1301,7 @@
             'veo3.1', 'veo3.1-fast', 'veo3.1-quality', 'veo3.1-lite',
             // Sora
             'sora-2', 'sora-2-pro',
-            // 通义万相
+            // 通義萬相
             'wan2.6-t2v', 'wan2.6-i2v',
             'wan2.5-t2v-preview', 'wan2.5-i2v-preview',
             'wan2.2-t2v-plus', 'wan2.2-i2v-plus', 'wan2.2-i2v-flash',
@@ -1305,7 +1330,7 @@
             toolbar.classList.toggle('collapsed', collapsed);
             const btn = toolbar.querySelector('.toolbar-toggle');
             if(btn){
-                btn.title = collapsed ? '展开快捷菜单' : '折叠快捷菜单';
+                btn.title = collapsed ? '展開快捷菜單' : '摺疊快捷菜單';
                 btn.setAttribute('aria-label', btn.title);
             }
             refreshIcons();
@@ -1385,11 +1410,11 @@
         function providerOptions(selectedId){
             const selected = resolveImageProviderId(selectedId);
             const providers = imageApiProviders();
-            if(!providers.length) return `<option value="" disabled selected>${tr('canvas.noApiProviders') || '暂无 API 平台'}</option>`;
+            if(!providers.length) return `<option value="" disabled selected>${tr('canvas.noApiProviders') || '暫無 API 平臺'}</option>`;
             return providers.map(provider => `<option value="${escapeHtml(provider.id)}" ${provider.id === selected ? 'selected' : ''}>${escapeHtml(provider.name || provider.id)}</option>`).join('');
         }
         function providerImageModels(providerId){
-            // 不走 providerById（会 fallback 到第一个 provider，造成串台），直接查精确匹配
+            // 不走 providerById（會 fallback 到第一個 provider，造成串臺），直接查精確匹配
             const provider = apiProviders.find(p => p.id === providerId);
             return uniqueModels(provider?.image_models || []);
         }
@@ -1407,14 +1432,14 @@
             return videoApiProviders().map(provider => `<option value="${escapeHtml(provider.id)}" ${provider.id === selected ? 'selected' : ''}>${escapeHtml(provider.name || provider.id)}</option>`).join('');
         }
         function providerVideoModels(providerId){
-            // 不走 providerById（会 fallback 到第一个 provider，造成串台），直接查精确匹配
+            // 不走 providerById（會 fallback 到第一個 provider，造成串臺），直接查精確匹配
             const provider = apiProviders.find(p => p.id === providerId);
             return uniqueModels(provider?.video_models || []);
         }
         function videoModelOptions(selectedModel, providerId){
             const models = providerVideoModels(providerId);
             if(!models.length){
-                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暂无模型，请到 API 设置添加'}</option>`;
+                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暫無模型，請到 API 設置添加'}</option>`;
             }
             const selected = selectedModel || models[0];
             return uniqueModels([selected, ...models]).filter(Boolean).map(model => `<option value="${escapeHtml(model)}" ${model === selected ? 'selected' : ''}>${escapeHtml(model)}</option>`).join('');
@@ -1483,7 +1508,7 @@
             errorModal.classList.add('open');
             refreshIcons();
         }
-        function apiErrorMessage(data, fallback='请求失败'){
+        function apiErrorMessage(data, fallback='請求失敗'){
             if(!data) return fallback;
             if(typeof data === 'string') return data || fallback;
             const detail = data.detail ?? data.error ?? data.message;
@@ -1506,7 +1531,7 @@
                 return fallback;
             }
         }
-        async function responseErrorMessage(response, fallback='请求失败'){
+        async function responseErrorMessage(response, fallback='請求失敗'){
             try {
                 const data = await response.clone().json();
                 return apiErrorMessage(data, fallback);
@@ -1644,11 +1669,11 @@
         }
         function imageModelOptions(selectedModel, providerId){
             if(!imageApiProviders().length){
-                return `<option value="" disabled selected>${tr('canvas.noApiProvidersHint') || '暂无 API 平台，请到 API 设置添加'}</option>`;
+                return `<option value="" disabled selected>${tr('canvas.noApiProvidersHint') || '暫無 API 平臺，請到 API 設置添加'}</option>`;
             }
             const models = allImageModels(providerId);
             if(!models.length){
-                return `<option value="" disabled selected>${tr('canvas.noImageModelsHint') || '暂无生图模型，请到 API 设置添加'}</option>`;
+                return `<option value="" disabled selected>${tr('canvas.noImageModelsHint') || '暫無生圖模型，請到 API 設置添加'}</option>`;
             }
             const selectedValue = resolveImageModel(selectedModel);
             const options = models.map(model => `<option value="${escapeHtml(model)}" ${model === selectedValue ? 'selected' : ''}>${escapeHtml(model)}</option>`).join('');
@@ -1658,7 +1683,7 @@
         function chatModelOptions(selectedModel, providerId=''){
             const models = providerId ? providerChatModels(providerId) : allChatModels();
             if(!models.length){
-                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暂无模型，请到 API 设置添加'}</option>`;
+                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暫無模型，請到 API 設置添加'}</option>`;
             }
             const selectedValue = resolveChatModel(selectedModel, providerId);
             const options = models.map(model => `<option value="${escapeHtml(model)}" ${model === selectedValue ? 'selected' : ''}>${escapeHtml(model)}</option>`).join('');
@@ -1864,10 +1889,18 @@
                         (node._pending || []).forEach(p => pendingById.set(p.id, p));
                     });
                     if(pendingById.size){
-                        document.querySelectorAll('.output-time-pill.running').forEach(pill => {
-                            const pendingId = pill.closest('[data-pending-id]')?.dataset.pendingId;
+                        document.querySelectorAll('.output-img-wrap.loading-wrap[data-pending-id]').forEach(wrap => {
+                            const pendingId = wrap.dataset.pendingId;
                             const pending = pendingById.get(pendingId);
-                            if(pending) pill.textContent = formatRunDuration(nowMs() - Number(pending.startedAt || nowMs()));
+                            if(!pending) return;
+                            const pill = wrap.querySelector('.output-time-pill.running');
+                            if(pill) pill.textContent = formatRunDuration(nowMs() - Number(pending.startedAt || nowMs()));
+                            const stage = wrap.querySelector('.output-pending-stage');
+                            if(stage) stage.textContent = pending.taskMessage || taskPhaseLabel(pending.taskPhase);
+                            const bar = wrap.querySelector('.output-pending-progress > span');
+                            if(bar) bar.style.width = `${Math.round(pendingProgressPercent(pending))}%`;
+                            const meta = wrap.querySelector('.output-pending-meta');
+                            if(meta) meta.textContent = pendingMetaText(pending);
                         });
                     } else {
                         clearInterval(outputTimer);
@@ -1961,7 +1994,7 @@
             }
         }
 
-        // 监听 API 设置页面的变更广播，实时刷新画布的模型/平台下拉
+        // 監聽 API 設置頁面的變更廣播，實時刷新畫布的模型/平臺下拉
         try {
             const apiChannel = new BroadcastChannel('studio-api');
             apiChannel.onmessage = async (e) => {
@@ -1971,13 +2004,13 @@
                     if(typeof render === 'function') render();
                 }
             };
-        } catch(e) { /* 不支持 BroadcastChannel 的旧浏览器忽略 */ }
+        } catch(e) { /* 不支持 BroadcastChannel 的舊瀏覽器忽略 */ }
         function msChatModelOptions(selected){
-            // 单一数据源：从 API 设置里 modelscope 平台的 chat_models 取
+            // 單一數據源：從 API 設置裏 modelscope 平臺的 chat_models 取
             const msProvider = apiProviders.find(p => p.id === 'modelscope');
             const list = uniqueModels(msProvider?.chat_models || []);
             if(!list.length){
-                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暂无模型，请到 API 设置添加'}</option>`;
+                return `<option value="" disabled selected>${tr('canvas.noModelsHint') || '暫無模型，請到 API 設置添加'}</option>`;
             }
             const sel = selected && list.includes(selected) ? selected : list[0];
             return list.map(m => `<option value="${escapeHtml(m)}" ${m === sel ? 'selected' : ''}>${escapeHtml(m.split('/').pop().split(':')[0])}</option>`).join('');
@@ -2222,11 +2255,11 @@
                         viewport:target.viewport || {x:0, y:0, scale:1}
                     })
                 });
-                if(!res.ok) throw new Error('图标保存失败');
+                if(!res.ok) throw new Error('圖標保存失敗');
                 if(canvas?.id === id) canvas.icon = target.icon;
                 await loadCanvasList(false);
             } catch(e) {
-                setStatus('图标保存失败');
+                setStatus('圖標保存失敗');
                 console.error(e);
             }
         }
@@ -2286,11 +2319,11 @@
                         viewport:target.viewport || {x:0, y:0, scale:1}
                     })
                 });
-                if(!res.ok) throw new Error('重命名失败');
+                if(!res.ok) throw new Error('重命名失敗');
                 if(currentCanvasTitle && canvas?.id === id) currentCanvasTitle.textContent = title;
                 await loadCanvasList(false);
             } catch(e){
-                setStatus('重命名失败');
+                setStatus('重命名失敗');
                 console.error(e);
             }
         }
@@ -2419,7 +2452,7 @@
                     await syncRemoteCanvasNow();
                 }
             } catch(e) {
-                // 轮询失败不打扰创作；下一轮会重试。
+                // 輪詢失敗不打擾創作；下一輪會重試。
             } finally {
                 remoteSyncBusy = false;
             }
@@ -2553,7 +2586,6 @@
         window.deleteCanvas = deleteCanvas;
         window.returnToCanvasManager = returnToCanvasManager;
         gateCreateBtn.addEventListener('click', () => setCreateMode(true));
-        gateCreateSmartBtn?.addEventListener('click', createSmartCanvas);
         gateBackBtn.addEventListener('click', () => setTrashMode(false));
         gateTrashBtn.addEventListener('click', () => setTrashMode(true));
         gateRefreshBtn.addEventListener('click', () => trashMode ? loadTrashList() : loadCanvasList(false));
@@ -2589,7 +2621,7 @@
                 refreshGridSplitPreview();
             });
         });
-        // 图片编辑区滚轮缩放
+        // 圖片編輯區滾輪縮放
         document.getElementById('imageEditStage').addEventListener('wheel', event => {
             if(!cropState) return;
             event.preventDefault();
@@ -2598,9 +2630,9 @@
             const oldZoom = imageEditZoom;
             const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12;
             imageEditZoom = Math.max(0.15, Math.min(6.0, imageEditZoom * factor));
-            // 焦点缩放：保持鼠标指向的图片位置不动
+            // 焦點縮放：保持鼠標指向的圖片位置不動
             const stageRect = stage.getBoundingClientRect();
-            const mx = event.clientX - stageRect.left; // 鼠标在 stage 内偏移
+            const mx = event.clientX - stageRect.left; // 鼠標在 stage 內偏移
             const my = event.clientY - stageRect.top;
             const contentX = stage.scrollLeft + mx;
             const contentY = stage.scrollTop + my;
@@ -2624,7 +2656,7 @@
         function defaultPoint(dx=0, dy=0){ return screenToWorld(window.innerWidth / 2 + dx, window.innerHeight / 2 + dy); }
         function addImageNode(point){
             const p = point || defaultPoint(-120, 0);
-            return addNode({id:uid('img'), type:'image', x:p.x, y:p.y, url:'', name:'空白图片'});
+            return addNode({id:uid('img'), type:'image', x:p.x, y:p.y, url:'', name:'空白圖片'});
         }
         function addPromptNode(point){
             const p = point || defaultPoint(0, 0);
@@ -2649,6 +2681,10 @@
             return addNode({id:uid('grp'), type:'group', x:p.x, y:p.y, w:300, h:220, items:[]});
         }
         function addLLMNode(point){
+            if(!isNodeTypeEnabled('llm')){
+                alert(featureDisabledMessage('LLM'));
+                return null;
+            }
             const p = point || defaultPoint(80, 0);
             const providerId = chatApiProviders()[0]?.id || 'comfly';
             return addNode({
@@ -2669,6 +2705,10 @@
             });
         }
         function addGeneratorNode(point){
+            if(!isNodeTypeEnabled('generator')){
+                alert(featureDisabledMessage(tr('canvas.apiGenerate')));
+                return null;
+            }
             const p = point || defaultPoint(120, 0);
             const providerId = imageApiProviders()[0]?.id || '';
             return addNode({id:uid('gen'), type:'generator', x:p.x, y:p.y, apiProvider:providerId, model:allImageModels(providerId)[0] || '', ratio:'square', resolution:'1k', customRatio:'', customSize:'', customRatioWidth:'', customRatioHeight:'', customWidth:'', customHeight:'', inputs:[]});
@@ -2725,13 +2765,13 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = () => resolve({width: img.naturalWidth, height: img.naturalHeight});
-                img.onerror = () => reject(new Error('图片加载失败'));
+                img.onerror = () => reject(new Error('圖片加載失敗'));
                 img.src = url;
             });
         }
         async function urlToBase64(url){
             const res = await fetch(url);
-            if(!res.ok) throw new Error('图片读取失败');
+            if(!res.ok) throw new Error('圖片讀取失敗');
             const blob = await res.blob();
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -3090,17 +3130,27 @@
             if(!prompt){ alert(tr('canvas.needPrompt')); return; }
             if(msModel.supportsImage && !refs.length){ alert(tr('canvas.needImage')); return; }
             const count = Math.max(1, Math.min(8, Number(node.count || 1)));
-            // 链路中间节点默认不创建 Output；链尾、手动开启或已有 Output 连接时才输出。
-            let out = outputForNode(node, 460);
+            // 同步維護所有已連接的 output，避免結果只寫到其中一個導致“看不到圖”。
+            const outputTargets = outputTargetsForNode(node, 460);
+            const out = outputTargets[outputTargets.length - 1] || null;
+            outputDebug('runMsGenNode.start', {
+                nodeId: node.id,
+                targetOutIds: outputTargets.map(target => target.id),
+                generatedOutputs: (node.generatedOutputs || []).map(outputUrlValue).filter(Boolean).length
+            });
             const pendingIds = Array.from({length:count}, () => uid('p'));
             const run = runSnapshot(node, prompt, refs);
-            if(out) out._pending = [...(out._pending || []), ...pendingIds.map(id => makePending(id, run))];
+            if(outputTargets.length){
+                outputTargets.forEach(target => {
+                    target._pending = [...(target._pending || []), ...pendingIds.map(id => makePending(id, run))];
+                });
+            }
             if(!opts.cascade){
                 node.running = true;
-                refreshRunNodes(node, out);
-                setTimeout(() => { node.running = false; refreshRunNodes(node, out); }, 2000);
+                refreshRunNodesMany(node, outputTargets);
+                setTimeout(() => { node.running = false; refreshRunNodesMany(node, outputTargets); }, 2000);
             }
-            else refreshRunNodes(node, out);
+            else refreshRunNodesMany(node, outputTargets);
             try {
                 const size = apiImageSize(node.msRatio ?? 'square', node.msResolution || '1k', node.msCustomRatio || '', node.msCustomSize || '');
                 const parsed = parseSizeValue(size);
@@ -3155,19 +3205,41 @@
                 const metas = collectRunMetas(out, pendingIds);
                 const outputUrls = results.map(data => data.url).filter(Boolean);
                 run.request = results[0] ? requestMetaFromResult(results[0]) : {};
-                if(out) out._pending = (out._pending || []).filter(p => !pendingIds.includes(p.id));
-                appendOutputImages(out, outputUrls, refs[0], metas);
+                outputTargets.forEach(target => {
+                    target._pending = (target._pending || []).filter(p => !pendingIds.includes(p.id));
+                    appendOutputImages(target, outputUrls, refs[0], metas);
+                });
+                outputDebug('runMsGenNode.success', {
+                    nodeId: node.id,
+                    outputUrls: outputUrls.length,
+                    targetOutStates: outputTargets.map(target => ({
+                        outId: target.id,
+                        images: (target.images || []).map(outputUrlValue).filter(Boolean).length,
+                        pending: (target._pending || []).length
+                    }))
+                });
                 mergeGeneratedOutputs(node, outputUrls, Boolean(opts.cascade));
                 addGenerationLog({run, outputs:outputUrls, runMs:Math.max(...metas.map(m => m.runMs || 0), 0)});
                 node.runStatus = 'done'; node.runError = '';
-                refreshRunNodes(node, out);
+                refreshRunNodesMany(node, outputTargets);
                 scheduleSave();
             } catch(err){
                 const metas = collectRunMetas(out, pendingIds);
                 addGenerationLog({run, outputs:[], runMs:Math.max(...metas.map(m => m.runMs || 0), 0), error:err.message || String(err)});
-                if(out) out._pending = (out._pending || []).filter(p => !pendingIds.includes(p.id));
+                outputTargets.forEach(target => {
+                    target._pending = (target._pending || []).filter(p => !pendingIds.includes(p.id));
+                });
+                outputDebug('runMsGenNode.fail', {
+                    nodeId: node.id,
+                    error: err?.message || String(err),
+                    targetOutStates: outputTargets.map(target => ({
+                        outId: target.id,
+                        images: (target.images || []).map(outputUrlValue).filter(Boolean).length,
+                        pending: (target._pending || []).length
+                    }))
+                });
                 node.runStatus = 'failed'; node.runError = err.message || String(err);
-                refreshRunNodes(node, out);
+                refreshRunNodesMany(node, outputTargets);
                 if(opts.cascade) throw err;
                 alert(err.message || tr('canvas.msFailed'));
             }
@@ -3281,7 +3353,7 @@
                         {type:'ltxDirector', label:tr('canvas.ltxDirector'), icon:'film'},
                         {type:'video', label:tr('canvas.videoGenerateNode'), icon:'clapperboard'},
                         {type:'llm', label:'LLM', icon:'message-square-text'}
-                    ];
+                    ].filter(opt => isNodeTypeEnabled(opt.type));
                 }
                 return [];
             }
@@ -3292,7 +3364,7 @@
                     {type:'loop', label:tr('canvas.loopNode'), icon:'repeat-2'},
                     {type:'group', label:tr('canvas.group'), icon:'group'},
                     {type:'llm', label:'LLM', icon:'message-square-text'}
-                ];
+                ].filter(opt => isNodeTypeEnabled(opt.type));
             }
             return [];
         }
@@ -3331,15 +3403,15 @@
                     {type:'ltxDirector', label:tr('canvas.ltxDirector'), icon:'film'},
                     {type:'video', label:tr('canvas.videoGenerateNode'), icon:'clapperboard'}
                 ] : [])
-            ];
+            ].filter(opt => isNodeTypeEnabled(opt.type));
             const buttonsHtml = (options, kind) => `<div class="node-port-menu-grid">${options.map(opt => `<button class="menu-btn" data-link-create="${escapeAttr(opt.type)}" data-link-kind="${kind}" title="${escapeAttr(opt.label)}"><i data-lucide="${escapeAttr(opt.icon)}"></i><span>${escapeHtml(opt.label.replace('生成', ''))}</span></button>`).join('')}</div>`;
             linkCreateState = {originId:nodeId, originKind:'in', point};
             createMenu.classList.remove('open');
             linkCreateMenu.classList.remove('open');
             nodeInputMenu.classList.add('node-port-menu');
             nodeOutputMenu.classList.add('node-port-menu');
-            nodeInputMenu.innerHTML = `<div class="menu-section-title">添加输入</div>${buttonsHtml(inputOptions, 'in')}`;
-            nodeOutputMenu.innerHTML = `<div class="menu-section-title">添加输出</div>${buttonsHtml(outputOptions, 'out')}`;
+            nodeInputMenu.innerHTML = `<div class="menu-section-title">添加輸入</div>${buttonsHtml(inputOptions, 'in')}`;
+            nodeOutputMenu.innerHTML = `<div class="menu-section-title">添加輸出</div>${buttonsHtml(outputOptions, 'out')}`;
             const inputLeft = Math.max(10, (rect?.left || clientX) - 158);
             const outputLeft = Math.min(window.innerWidth - 158, (rect?.right || clientX) + 10);
             const menuTop = Math.max(10, Math.min(window.innerHeight - 260, (rect?.top || clientY) + 36));
@@ -3374,7 +3446,7 @@
             const node = nodes.find(n => n.id === nodeId);
             if(!node || node.type !== 'image') return;
             closeCreateMenu();
-            imageNodeMenu.innerHTML = `<button class="menu-btn" data-image-replace="${escapeAttr(nodeId)}"><i data-lucide="image-plus" class="w-4 h-4"></i><span>替换</span></button>`;
+            imageNodeMenu.innerHTML = `<button class="menu-btn" data-image-replace="${escapeAttr(nodeId)}"><i data-lucide="image-plus" class="w-4 h-4"></i><span>替換</span></button>`;
             imageNodeMenu.style.left = `${clientX}px`;
             imageNodeMenu.style.top = `${clientY}px`;
             imageNodeMenu.classList.add('open');
@@ -3553,12 +3625,25 @@
             const toId = state.originKind === 'out' ? created.id : origin.id;
             if(canConnect(fromId, toId) && !connections.some(c => c.from === fromId && c.to === toId)){
                 connections.push({id:uid('c'), from:fromId, to:toId});
+                if(state.originKind === 'out' && created.type === 'output' && CANVAS_GENERATOR_TYPES.includes(origin.type)){
+                    hydrateOutputFromGenerator(created, origin);
+                }
+                outputDebug('createLinkedNode.connect', {
+                    originId: origin.id,
+                    originType: origin.type,
+                    createdId: created.id,
+                    createdType: created.type,
+                    fromId,
+                    toId,
+                    createdImages: (created.images || []).map(outputUrlValue).filter(Boolean).length
+                });
                 syncGeneratorInputs();
                 scheduleSave();
                 render();
             }
         }
         function createNodeByType(type, point){
+            if(!isNodeTypeEnabled(type)) return null;
             if(type === 'image') return addImageNode(point);
             if(type === 'prompt') return addPromptNode(point);
             if(type === 'loop') return addLoopNode(point);
@@ -3574,6 +3659,7 @@
         }
         function menuAdd(type){
             closeCreateMenu();
+            if(!isNodeTypeEnabled(type)) return;
             if(type === 'image') addImageNode(menuPoint);
             if(type === 'prompt') addPromptNode(menuPoint);
             if(type === 'loop') addLoopNode(menuPoint);
@@ -3655,7 +3741,7 @@
             if(!node || node.type !== 'image') return;
             pushUndo();
             node.url = '';
-            node.name = '空白图片';
+            node.name = '空白圖片';
             render();
             scheduleSave();
         }
@@ -3713,7 +3799,7 @@
             resizeEditDrawCanvas();
             if(imageEditMode === 'grid') refreshGridSplitPreview();
             else if(imageEditMode === 'crop') clearEditDrawing(true);
-            else if(prevImageEditMode === 'grid') clearEditDrawing(true); // 离开 grid 时主动清掉画布上残留的分割线预览
+            else if(prevImageEditMode === 'grid') clearEditDrawing(true); // 離開 grid 時主動清掉畫布上殘留的分割線預覽
             syncEditDrawingHistoryButtons();
             syncBrushToolButtons();
             refreshIcons();
@@ -3889,7 +3975,7 @@
             if(imageEditMode === 'crop') return;
             if(imageEditMode === 'grid'){
                 if(!gridCustomMode) return;
-                // 自定义模式：拖动已有线，或点击空白处放置新线
+                // 自定義模式：拖動已有線，或點擊空白處放置新線
                 event.preventDefault();
                 event.stopPropagation();
                 const canvasEl = editDrawCanvas();
@@ -4012,10 +4098,10 @@
         function gridSplitRectsCustom(width, height){
             const gap = Math.max(0, Math.min(240, Number(document.getElementById('gridGapSize')?.value || 0)));
             const halfGap = gap / 2;
-            // 按方向归类，转换为像素位置（去重并排序）
+            // 按方向歸類，轉換爲像素位置（去重並排序）
             const rawH = [...new Set(gridCustomLines.filter(l => l.type === 'h').map(l => l.pos * height))].sort((a, b) => a - b);
             const rawV = [...new Set(gridCustomLines.filter(l => l.type === 'v').map(l => l.pos * width))].sort((a, b) => a - b);
-            const hCuts = [0, ...rawH, height]; // 切割边界（含图片两端）
+            const hCuts = [0, ...rawH, height]; // 切割邊界（含圖片兩端）
             const vCuts = [0, ...rawV, width];
             const rects = [];
             for(let row = 0; row < hCuts.length - 1; row++){
@@ -4056,17 +4142,17 @@
             _syncGridCustomUndoBtn();
             refreshGridSplitPreview();
         }
-        // ——— 自定义宫格辅助函数 ———
+        // ——— 自定義宮格輔助函數 ———
         function toggleGridCustomMode(){
             gridCustomMode = !gridCustomMode;
-            if(gridCustomMode){ gridCustomLines = []; gridCustomHistory = []; } // 进入自定义时清空旧线及历史
+            if(gridCustomMode){ gridCustomLines = []; gridCustomHistory = []; } // 進入自定義時清空舊線及歷史
             gridCustomDrag = null;
             const toggle = document.getElementById('gridCustomToggle');
             const regular = document.getElementById('gridRegularControls');
             const custom = document.getElementById('gridCustomControls');
             toggle.classList.toggle('primary', gridCustomMode);
             toggle.classList.toggle('secondary', !gridCustomMode);
-            // 禁用/启用常规输入
+            // 禁用/啓用常規輸入
             ['gridHorizontalLines','gridVerticalLines'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.disabled = gridCustomMode;
@@ -4104,7 +4190,7 @@
             btn.disabled = gridCustomHistory.length === 0;
             btn.style.opacity = gridCustomHistory.length === 0 ? '0.4' : '1';
         }
-        // ——— 图片缩放 ———
+        // ——— 圖片縮放 ———
         function applyImageEditZoom(){
             if(!imageEditBaseW) return;
             const img = document.getElementById('cropImage');
@@ -4173,7 +4259,7 @@
                 ctx.restore();
             };
             if(gridCustomMode){
-                // 自定义模式：按已放置线渲染（包含空心范围预览）
+                // 自定義模式：按已放置線渲染（包含空心範圍預覽）
                 const gap = Math.max(0, Math.min(240, Number(document.getElementById('gridGapSize')?.value || 0)));
                 const hLines = gridCustomLines.filter(l => l.type === 'h');
                 const vLines = gridCustomLines.filter(l => l.type === 'v');
@@ -4200,7 +4286,7 @@
                 ctx.restore();
                 return;
             }
-            // 常规模式
+            // 常規模式
             const {rows, cols, gap} = gridSplitSettings();
             if(countEl) countEl.textContent = tr('canvas.gridWillOutput').replace('{n}', rows * cols);
             ctx.save();
@@ -4266,10 +4352,14 @@
             renderCropBox();
         }
         function openImageEditor(nodeId){
+            if(!IMAGE_EDIT_ENABLED){
+                alert(featureDisabledMessage(langIsEn() ? 'Image editor' : '圖片編輯'));
+                return;
+            }
             const node = nodes.find(n => n.id === nodeId);
             if(!node?.url) return;
             cropState = {nodeId, x:0, y:0, w:0, h:0};
-            // 重置自定义宫格状态
+            // 重置自定義宮格狀態
             gridCustomMode = false;
             gridCustomLines = [];
             gridCustomHistory = [];
@@ -4298,7 +4388,7 @@
             img.style.maxHeight = '';
             modal.classList.add('open');
             img.onload = () => {
-                // 记录 zoom=1 时的基础显示尺寸
+                // 記錄 zoom=1 時的基礎顯示尺寸
                 imageEditBaseW = img.clientWidth;
                 imageEditBaseH = img.clientHeight;
                 _updateZoomLabel();
@@ -4489,7 +4579,7 @@
                 const layout = gridLayoutFromRects(rects);
                 appendOutputImages(out, urls, {url:node.url, name:node.name || 'source image'}, urls.map((url, i) => ({
                     runMs:0,
-                    run:{prompt:'宫格切分', refs:[{url:node.url, name:node.name || 'source image'}]},
+                    run:{prompt:'宮格切分', refs:[{url:node.url, name:node.name || 'source image'}]},
                     grid:{...layout, row:rects[i]?.row || 0, col:rects[i]?.col || 0, w:rects[i]?.w || 1, h:rects[i]?.h || 1}
                 })), layout);
                 closeImageEditor();
@@ -4498,6 +4588,10 @@
             }
         }
         function applyImageEdit(){
+            if(!IMAGE_EDIT_ENABLED){
+                alert(featureDisabledMessage(langIsEn() ? 'Image editor' : '圖片編輯'));
+                return;
+            }
             if(imageEditMode === 'mask') return applyImageMask();
             if(imageEditMode === 'brush') return applyImageBrush();
             if(imageEditMode === 'grid') return applyImageGridSplit();
@@ -4540,14 +4634,18 @@
         function refreshRunNodes(node, out=null){
             refreshNodes([node?.id, out?.id]);
         }
+        function refreshRunNodesMany(node, outs=[]){
+            const outIds = (outs || []).map(out => out?.id).filter(Boolean);
+            refreshNodes([node?.id, ...outIds]);
+        }
         function captureOutputScrolls(){
             const state = new Map();
-            // output 节点滚动位置
+            // output 節點滾動位置
             nodesEl.querySelectorAll('.output-node').forEach(el => {
                 const body = el.querySelector('.node-body');
                 if(body) state.set('out:' + el.dataset.id, { top:body.scrollTop, left:body.scrollLeft });
             });
-            // LLM 聊天日志滚动位置（记录是否在底部，以便恢复时保持底部）
+            // LLM 聊天日誌滾動位置（記錄是否在底部，以便恢復時保持底部）
             nodesEl.querySelectorAll('.llm-node').forEach(el => {
                 const log = el.querySelector('.llm-chat-log');
                 if(!log) return;
@@ -4567,7 +4665,7 @@
                         const id = key.slice(4);
                         const log = nodesEl.querySelector(`.llm-node[data-id="${CSS.escape(id)}"] .llm-chat-log`);
                         if(log){
-                            // 之前在底部 → 保持底部（显示最新消息）；否则恢复原位
+                            // 之前在底部 → 保持底部（顯示最新消息）；否則恢復原位
                             log.scrollTop = pos.atBottom ? log.scrollHeight : (pos.top || 0);
                         }
                     }
@@ -4584,6 +4682,32 @@
         }
         function isNodeDragSurface(target){
             return !isNodeControl(target) && !target.closest('.port, .resize-handle, .output-img-wrap');
+        }
+        function outputDebug(...args){
+            if(!OUTPUT_DEBUG) return;
+            console.info('[OUTPUT-DEBUG]', ...args);
+        }
+        function linkedOutputIdsForNode(nodeId){
+            return connections
+                .filter(c => c.from === nodeId)
+                .map(c => nodes.find(n => n.id === c.to))
+                .filter(n => n?.type === 'output')
+                .map(n => n.id);
+        }
+        function generatorDebugSummary(node){
+            const linked = linkedOutputIdsForNode(node.id);
+            const generated = (node.generatedOutputs || []).map(outputUrlValue).filter(Boolean).length;
+            return `DBG gen=${node.id}\nlinkedOut=${linked.join(',') || '-'}\ngeneratedOutputs=${generated}`;
+        }
+        function outputDebugSummary(node){
+            const imageCount = (node.images || []).map(outputUrlValue).filter(Boolean).length;
+            const pendingCount = (node._pending || []).length;
+            const upstream = connections
+                .filter(c => c.to === node.id)
+                .map(c => nodes.find(n => n.id === c.from))
+                .filter(Boolean)
+                .map(n => n.id);
+            return `DBG out=${node.id}\nupstream=${upstream.join(',') || '-'}\nimages=${imageCount} pending=${pendingCount}`;
         }
         function renderNode(node){
             normalizeApiNodeLayout(node);
@@ -4611,14 +4735,14 @@
                 else openGeneratorNodeMenu(node.id, e.clientX, e.clientY);
             };
             const title = node.type === 'image' ? 'Image' : node.type === 'prompt' ? 'Prompt' : node.type === 'loop' ? tr('canvas.loopNode') : node.type === 'promptGroup' ? 'Prompts' : node.type === 'group' ? 'Group' : node.type === 'output' ? 'Output' : node.type === 'llm' ? 'LLM' : node.type === 'comfy' ? 'ComfyUI' : node.type === 'ltxDirector' ? tr('canvas.ltxDirector') : node.type === 'msgen' ? tr('canvas.modelscopeGenerate') : node.type === 'video' ? tr('canvas.videoGenerateNode') : tr('canvas.apiGenerate');
-            // 失败徽章只在一键运行模式中显示，单节点失败已通过 alert 提示
+            // 失敗徽章只在一鍵運行模式中顯示，單節點失敗已通過 alert 提示
             const showStatus = ['generator','msgen','comfy','ltxDirector','llm'].includes(node.type) && node.runStatus
                 && (node.runStatus !== 'failed' || node._cascadeFailed);
             const statusHtml = showStatus ? (() => {
-                const label = { queued:'排队中', running:'运行中', done:'完成', failed:'失败' }[node.runStatus] || '';
+                const label = { queued:'排隊中', running:'運行中', done:'完成', failed:'失敗' }[node.runStatus] || '';
                 return `<span class="node-run-status ${node.runStatus}"><span class="dot"></span>${escapeHtml(label)}${node._cascadeIdx?' '+node._cascadeIdx:''}</span>`;
             })() : '';
-            el.innerHTML = `<div class="node-head"><span class="node-title">${title}</span><div style="display:flex;align-items:center;gap:8px">${statusHtml}<button onclick="deleteNode('${node.id}', event)" class="text-gray-300 hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button></div></div>`;
+            el.innerHTML = `<div class="node-head"><span class="node-title">${title}</span><div style="display:flex;align-items:center;gap:8px">${statusHtml}<button onclick="deleteNode('${node.id}', event)" class="node-close-btn text-gray-300 hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button></div></div>`;
             const body = document.createElement('div');
             body.className = 'node-body';
             if(node.type === 'image') {
@@ -4634,7 +4758,7 @@
                         openImageEditor(node.id);
                     };
                     body.onmousedown = e => {
-                        if(e.detail >= 2){
+                        if(IMAGE_EDIT_ENABLED && e.detail >= 2){
                             openEditor(e);
                             return;
                         }
@@ -4646,7 +4770,7 @@
                             e.stopPropagation();
                             e.dataTransfer.dropEffect = hasOutputImageDrag(e.dataTransfer) ? 'copy' : 'move';
                             previewWrap.classList.add('drag-over');
-                            /* 节点内拖拽时把画布全局的毛玻璃覆盖层关掉，避免 stopPropagation 后 board 没机会清它 */
+                            /* 節點內拖拽時把畫布全局的毛玻璃覆蓋層關掉，避免 stopPropagation 後 board 沒機會清它 */
                             dropOverlay.classList.remove('active');
                         }
                     };
@@ -4767,14 +4891,18 @@
             if(node.type === 'comfy') body.appendChild(renderComfyBody(node));
             if(node.type === 'ltxDirector') body.appendChild(renderLTXDirectorBody(node));
             if(node.type === 'output') {
-                const pendingHtml = (node._pending || []).map(p =>
-                    `<div class="output-img-wrap loading-wrap" data-pending-id="${escapeAttr(p.id)}"><span class="output-time-pill running">${formatRunDuration(nowMs() - Number(p.startedAt || nowMs()))}</span><div class="output-spinner"></div><button class="output-del" title="${tr('common.delete')}">×</button></div>`
-                ).join('');
+                const pendingHtml = (node._pending || []).map(p => renderPendingOutputWrap(p)).join('');
                 body.innerHTML = renderOutputGrid(node, pendingHtml);
                 body.onwheel = e => {
                     e.stopPropagation();
                 };
                 body.querySelectorAll('.output-img-wrap').forEach(wrap => bindOutputWrap(wrap, node));
+            }
+            if(SHOW_DEBUG_BADGE && OUTPUT_DEBUG && ['generator','msgen','comfy','ltxDirector','video'].includes(node.type)){
+                body.insertAdjacentHTML('afterbegin', `<div class="node-debug-badge">${escapeHtml(generatorDebugSummary(node))}</div>`);
+            }
+            if(SHOW_DEBUG_BADGE && OUTPUT_DEBUG && node.type === 'output'){
+                body.insertAdjacentHTML('afterbegin', `<div class="node-debug-badge">${escapeHtml(outputDebugSummary(node))}</div>`);
             }
             el.appendChild(body);
             el.querySelectorAll('button, select, textarea, input').forEach(control => {
@@ -4786,7 +4914,7 @@
                 startNodeDrag(e, node);
             };
             const canInput = ['generator','comfy','ltxDirector','output','llm','msgen','video'].includes(node.type) || (node.type === 'loop' && (node.imageInput || node.showPrompt));
-            const canOutput = ['image','prompt','loop','group','promptGroup','generator','comfy','ltxDirector','llm','msgen','video'].includes(node.type);
+            const canOutput = ['image','prompt','loop','group','promptGroup','generator','comfy','ltxDirector','llm','msgen','video','output'].includes(node.type);
             if(canInput) el.insertAdjacentHTML('beforeend', `<div class="port in" title="${tr('canvas.connectHere')}"></div>`);
             if(canOutput) el.insertAdjacentHTML('beforeend', `<div class="port out" title="${tr('canvas.dragConnect')}"></div>`);
             el.insertAdjacentHTML('beforeend', `<div class="resize-handle" title="${tr('canvas.resize')}"></div>`);
@@ -4873,7 +5001,7 @@
                 })),
                 ...(node._pending || []).map(p => ({
                     key:outputDomKeyForPending(p),
-                    html:`<div class="output-img-wrap loading-wrap" data-pending-id="${escapeAttr(p.id)}"><span class="output-time-pill running">${formatRunDuration(nowMs() - Number(p.startedAt || nowMs()))}</span><div class="output-spinner"></div><button class="output-del" title="${tr('common.delete')}">×</button></div>`
+                    html:renderPendingOutputWrap(p)
                 }))
             ];
             const wanted = new Set(items.map(item => item.key));
@@ -4967,9 +5095,9 @@
             const index = Math.max(1, Number(ctx?.index || 1) || 1);
             const total = Math.max(1, Number(ctx?.total || count) || count);
             const replaceVars = text => String(text || '')
-                .replaceAll('《计数》', String(index))
-                .replaceAll('《总数》', String(total))
-                .replaceAll('《进度》', `${index}/${total}`)
+                .replaceAll('《計數》', String(index))
+                .replaceAll('《總數》', String(total))
+                .replaceAll('《進度》', `${index}/${total}`)
                 .replaceAll(`[${tr('canvas.counterToken')}]`, String(index))
                 .replaceAll(`[${tr('canvas.totalToken')}]`, String(total))
                 .replaceAll(`[${tr('canvas.progressToken')}]`, `${index}/${total}`);
@@ -5009,9 +5137,9 @@
             return allRefs.slice(start, start + batchSize);
         }
         function loopTokenLabel(token){
-            if(token === '《计数》') return tr('canvas.counterToken');
-            if(token === '《总数》') return tr('canvas.totalToken');
-            if(token === '《进度》') return tr('canvas.progressToken');
+            if(token === '《計數》') return tr('canvas.counterToken');
+            if(token === '《總數》') return tr('canvas.totalToken');
+            if(token === '《進度》') return tr('canvas.progressToken');
             return token;
         }
         function autoSizeLoopNode(node, opening){
@@ -5036,7 +5164,7 @@
             return `<span class="loop-token-chip" contenteditable="false" data-token="${escapeAttr(token)}"><span>${escapeHtml(loopTokenLabel(token))}</span><button type="button" aria-label="${tr('common.delete')}" title="${tr('common.delete')}">×</button></span>`;
         }
         function loopVariableHtml(text){
-            const token = '《计数》';
+            const token = '《計數》';
             return String(text || '').split(token).map((part, i) => `${i ? loopTokenChipHtml(token) : ''}${escapeHtml(part)}`).join('');
         }
         function loopEditorText(editor){
@@ -5101,8 +5229,8 @@
             const loopTargetId = findLoopCascadeTarget(node.id);
             const loopTargetOrder = loopTargetId ? computeCascadeOrder(loopTargetId) : [];
             const loopRunHtml = loopTargetId ? (cascadeSerialIds.has(loopTargetId)
-                ? `<div class="gen-run-row"><button class="gen-cascade-btn gen-cascade-stop" type="button" data-loop-cascade-stop="${loopTargetId}" ${cascadeStopIds.has(loopTargetId) ? 'disabled' : ''}><i data-lucide="square" class="w-4 h-4"></i><span>${cascadeStopIds.has(loopTargetId) ? '停止中…' : '停止循环'}</span></button></div>`
-                : `<div class="gen-run-row"><button class="gen-cascade-btn" type="button" data-loop-cascade="${loopTargetId}" title="从当前循环节点启动整条工作流"><i data-lucide="play-circle" class="w-4 h-4"></i><span>开始 ${loopTargetOrder.length || 1} 个节点 × ${node.count} ${tr('canvas.loopRounds')}</span></button></div>`)
+                ? `<div class="gen-run-row"><button class="gen-cascade-btn gen-cascade-stop" type="button" data-loop-cascade-stop="${loopTargetId}" ${cascadeStopIds.has(loopTargetId) ? 'disabled' : ''}><i data-lucide="square" class="w-4 h-4"></i><span>${cascadeStopIds.has(loopTargetId) ? '停止中…' : '停止循環'}</span></button></div>`
+                : `<div class="gen-run-row"><button class="gen-cascade-btn" type="button" data-loop-cascade="${loopTargetId}" title="從當前循環節點啓動整條工作流"><i data-lucide="play-circle" class="w-4 h-4"></i><span>開始 ${loopTargetOrder.length || 1} 個節點 × ${node.count} ${tr('canvas.loopRounds')}</span></button></div>`)
                 : '';
             wrap.innerHTML = `
                 <div class="loop-count-row">
@@ -5134,9 +5262,9 @@
                     <div class="loop-field">
                         <div class="loop-variable-editor ${hasUpstreamPrompt ? 'is-disabled' : ''}" contenteditable="${hasUpstreamPrompt ? 'false' : 'true'}" data-placeholder="${escapeAttr(tr('canvas.loopVariablePlaceholder'))}">${loopVariableHtml(node.variablePrompt || '')}</div>
                     </div>
-                    ${hasUpstreamPrompt ? `<div class="loop-prompt-hint">已识别 ${promptItemCount} 条提示词，按计数轮流输出</div>` : ''}
+                    ${hasUpstreamPrompt ? `<div class="loop-prompt-hint">已識別 ${promptItemCount} 條提示詞，按計數輪流輸出</div>` : ''}
                     <div class="loop-start-row">
-                        <button class="loop-token-btn loop-counter-token-btn" type="button" data-token="《计数》">${tr('canvas.counterToken')}</button>
+                        <button class="loop-token-btn loop-counter-token-btn" type="button" data-token="《計數》">${tr('canvas.counterToken')}</button>
                         <span class="loop-count-label">${tr('canvas.loopStart')}</span>
                         <input class="loop-count-input loop-start-input" type="number" min="1" max="9999" step="1" value="${node.loopStart}">
                     </div>
@@ -5166,12 +5294,12 @@
                 node.count = loopCount({count:e.target.value});
                 e.target.value = node.count;
                 refreshPreview();
-                /* 同步底部级联按钮上的轮数文字，避免输入循环次数后下游"× N 轮"残留旧值
-                   不直接 render() 是为了不破坏当前正在输入的 input 焦点 */
+                /* 同步底部級聯按鈕上的輪數文字，避免輸入循環次數後下遊"× N 輪"殘留舊值
+                   不直接 render() 是爲了不破壞當前正在輸入的 input 焦點 */
                 const loopCascadeBtn = wrap.querySelector('[data-loop-cascade]');
                 if(loopCascadeBtn){
                     const span = loopCascadeBtn.querySelector('span');
-                    if(span) span.textContent = `开始 ${loopTargetOrder.length || 1} 个节点 × ${node.count} ${tr('canvas.loopRounds')}`;
+                    if(span) span.textContent = `開始 ${loopTargetOrder.length || 1} 個節點 × ${node.count} ${tr('canvas.loopRounds')}`;
                 }
                 if(loopTargetId){
                     const targetEl = document.querySelector(`.node[data-id="${loopTargetId}"]`);
@@ -5180,7 +5308,7 @@
                         const span = targetCascadeBtn.querySelector('span');
                         if(span){
                             const targetOrder = computeCascadeOrder(loopTargetId);
-                            span.textContent = `一键运行 ${targetOrder.length} 个节点 × ${node.count} ${tr('canvas.loopRounds')}`;
+                            span.textContent = `一鍵運行 ${targetOrder.length} 個節點 × ${node.count} ${tr('canvas.loopRounds')}`;
                         }
                     }
                 }
@@ -5323,7 +5451,7 @@
             if(!providerChatModels(llmProv).includes(node.model)) node.model = providerChatModels(llmProv)[0] || node.model;
             const modelOpts = chatModelOptions(node.model, llmProv);
             const imgs = llmInputImages(node);
-            const imgBadge = imgs.length ? `<div style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;background:rgba(16,185,129,.12);color:#047857;font-size:10.5px;font-weight:700;width:fit-content;line-height:1.4"><i data-lucide="image" class="w-3 h-3"></i>已连接 ${imgs.length} 张图片 · 需选 VL 视觉模型（如 Qwen2.5-VL）</div>` : '';
+            const imgBadge = imgs.length ? `<div style="display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;background:rgba(16,185,129,.12);color:#047857;font-size:10.5px;font-weight:700;width:fit-content;line-height:1.4"><i data-lucide="image" class="w-3 h-3"></i>已連接 ${imgs.length} 張圖片 · 需選 VL 視覺模型（如 Qwen2.5-VL）</div>` : '';
             node.showSystem = Boolean(node.showSystem);
             wrap.innerHTML = `
                 <div class="llm-row">
@@ -5384,14 +5512,14 @@
             const inputValue = connectedInput || node.userInput || '';
             const inputHeight = Math.max(70, node.llmInputHeight || 110);
             const outputHeight = Math.max(70, node.llmOutputHeight || 150);
-            const inputPlaceholder = langIsEn() ? 'Type input, or connect a Prompt node…' : '直接输入，或连接提示词节点…';
+            const inputPlaceholder = langIsEn() ? 'Type input, or connect a Prompt node…' : '直接輸入，或連接提示詞節點…';
             container.innerHTML = `
-                <div class="llm-pane-label">Input${isReadonly ? ' <span style="font-size:9px;opacity:.5;font-weight:600;text-transform:none;letter-spacing:0">(来自连接)</span>' : ''}</div>
+                <div class="llm-pane-label">Input${isReadonly ? ' <span style="font-size:9px;opacity:.5;font-weight:600;text-transform:none;letter-spacing:0">(來自連接)</span>' : ''}</div>
                 <textarea class="llm-input-area llm-input-output" style="height:${inputHeight}px; flex:0 0 ${inputHeight}px;" ${isReadonly ? 'readonly' : ''} placeholder="${inputPlaceholder}">${escapeHtml(inputValue)}</textarea>
                 <div class="llm-pane-resizer" title="${tr('canvas.resizePanes')}"></div>
                 <div class="llm-pane-label">Output</div>
                 <div class="llm-output-wrap" style="height:${outputHeight}px; flex:0 0 ${outputHeight}px;">
-                    <button class="llm-copy-btn llm-output-copy" type="button" title="复制"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                    <button class="llm-copy-btn llm-output-copy" type="button" title="複製"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
                     <div class="llm-output llm-result-output">${escapeHtml(node.outputText || tr('canvas.llmOutputEmpty'))}</div>
                 </div>
                 <div class="gen-run-row mt-2">
@@ -5426,7 +5554,7 @@
         function renderLLMChatPane(container, node){
             const messages = node.messages || [];
             container.innerHTML = `
-                <div class="llm-chat-log">${messages.length ? messages.map((msg, mi) => `<div class="llm-bubble ${msg.role === 'user' ? 'user' : 'assistant'}" data-msg-idx="${mi}">${escapeHtml(msg.content || '')}${msg.role === 'assistant' ? `<button class="llm-bubble-copy" type="button" title="复制"><i data-lucide="copy" style="width:11px;height:11px;display:inline-block;vertical-align:middle"></i></button>` : ''}</div>`).join('') : `<div class="text-[11px] text-gray-300">${tr('canvas.startChat')}</div>`}</div>
+                <div class="llm-chat-log">${messages.length ? messages.map((msg, mi) => `<div class="llm-bubble ${msg.role === 'user' ? 'user' : 'assistant'}" data-msg-idx="${mi}">${escapeHtml(msg.content || '')}${msg.role === 'assistant' ? `<button class="llm-bubble-copy" type="button" title="複製"><i data-lucide="copy" style="width:11px;height:11px;display:inline-block;vertical-align:middle"></i></button>` : ''}</div>`).join('') : `<div class="text-[11px] text-gray-300">${tr('canvas.startChat')}</div>`}</div>
                 <textarea class="llm-chat-input mt-2" rows="2" placeholder="${tr('canvas.chatInput')}">${escapeHtml(node.chatInput || '')}</textarea>
                 <button class="llm-run mt-2" ${node.running ? 'disabled' : ''}><i data-lucide="send" class="w-4 h-4"></i>${node.running ? tr('canvas.sending') : 'Send'}</button>
             `;
@@ -6012,6 +6140,18 @@
                     reorderInput(node, e.dataTransfer.getData('application/x-canvas-input'), src.id);
                     internalDrag = false;
                 };
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'input-remove';
+                removeBtn.type = 'button';
+                removeBtn.title = tr('common.delete');
+                removeBtn.setAttribute('aria-label', tr('common.delete'));
+                removeBtn.textContent = '×';
+                removeBtn.onclick = e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeInputSource(node, src.id);
+                };
+                item.appendChild(removeBtn);
                 list.appendChild(item);
             });
             refreshIcons();
@@ -6038,6 +6178,18 @@
                 item.ondragend = () => { internalDrag = false; };
                 item.ondragover = e => { e.preventDefault(); e.stopPropagation(); };
                 item.ondrop = e => { e.preventDefault(); e.stopPropagation(); reorderInput(node, e.dataTransfer.getData('application/x-canvas-input'), src.id); internalDrag = false; };
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'input-remove';
+                removeBtn.type = 'button';
+                removeBtn.title = tr('common.delete');
+                removeBtn.setAttribute('aria-label', tr('common.delete'));
+                removeBtn.textContent = '×';
+                removeBtn.onclick = e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeInputSource(node, src.id);
+                };
+                item.appendChild(removeBtn);
                 list.appendChild(item);
             });
             refreshIcons();
@@ -6084,7 +6236,7 @@
             if(f.bind_prompt === true) return 'prompt';
             if(f.bind_prompt === false) return 'setting';
             const key = `${f.input || ''} ${f.name || ''}`.toLowerCase();
-            if(f.type === 'textarea' || /prompt|text|提示词|正向|负向/.test(key)) return 'prompt';
+            if(f.type === 'textarea' || /prompt|text|提示詞|正向|負向/.test(key)) return 'prompt';
             return 'setting';
         }
         function comfyFields(node, kind='all'){
@@ -6109,7 +6261,7 @@
             let min = Number.isFinite(Number(field.min)) ? Number(field.min) : null;
             let max = Number.isFinite(Number(field.max)) ? Number(field.max) : null;
             const name = `${field.input || ''} ${field.name || ''}`.toLowerCase();
-            const looksSeed = name.includes('seed') || name.includes('noise') || name.includes('随机') || name.includes('噪');
+            const looksSeed = name.includes('seed') || name.includes('noise') || name.includes('隨機') || name.includes('噪');
             if(min === null) min = looksSeed ? 1 : 0;
             if(max === null || max <= min) max = looksSeed ? 1000000000000000 : 999999;
             let value = min + Math.random() * (max - min);
@@ -6311,7 +6463,7 @@
             if(f.type === 'dropdown'){
                 const opts = (f.options || []).map(o => `<option value="${escapeHtml(o)}" ${String(value) === String(o) ? 'selected' : ''}>${escapeHtml(o)}</option>`).join('');
                 return `<div class="gen-settings-row">
-                    <label class="field" style="flex:1"><div class="setting-title">${label}</div><select class="select-lite" data-comfy-param="${escapeHtml(f.id)}" data-comfy-type="dropdown" style="width:100%">${opts || '<option value="">(无选项)</option>'}</select></label>
+                    <label class="field" style="flex:1"><div class="setting-title">${label}</div><select class="select-lite" data-comfy-param="${escapeHtml(f.id)}" data-comfy-type="dropdown" style="width:100%">${opts || '<option value="">(無選項)</option>'}</select></label>
                 </div>`;
             }
             if(f.type === 'textarea'){
@@ -6325,7 +6477,7 @@
                 return `<div class="gen-settings-row">
                     <div class="comfy-random-field">
                         <label class="field"><div class="setting-title">${label}</div><input class="setting-input" type="number" data-comfy-param="${escapeHtml(f.id)}" data-comfy-type="number" value="${escapeHtml(value)}"></label>
-                        <button class="tool-btn comfy-random-btn ${active ? 'active' : ''}" type="button" data-comfy-random="${escapeHtml(f.id)}" title="${active ? '随机已开启，点击关闭' : '随机已关闭，点击开启'}" aria-label="${active ? '随机已开启，点击关闭' : '随机已关闭，点击开启'}"><i data-lucide="dice-5" class="w-4 h-4"></i></button>
+                        <button class="tool-btn comfy-random-btn ${active ? 'active' : ''}" type="button" data-comfy-random="${escapeHtml(f.id)}" title="${active ? '隨機已開啓，點擊關閉' : '隨機已關閉，點擊開啓'}" aria-label="${active ? '隨機已開啓，點擊關閉' : '隨機已關閉，點擊開啓'}"><i data-lucide="dice-5" class="w-4 h-4"></i></button>
                     </div>
                 </div>`;
             }
@@ -6372,6 +6524,8 @@
             scheduleSave();
         }
 
+        // 相容舊版畫布：早期 API 生圖節點 type 為 generator。
+        // 若漏掉這個型別，重新打開時 sanitizeConnections 會把連接線誤判為非法並清掉。
         const CANVAS_GENERATOR_TYPES = ['generator','msgen','comfy','ltxDirector','video'];
         const CANVAS_IMAGE_OUTPUT_TYPES = ['generator','msgen','comfy','ltxDirector'];
         function hasExplicitOutputConnection(nodeId){
@@ -6397,21 +6551,58 @@
         }
         function shouldCreateOutputForNode(node){
             if(!node) return false;
-            if(hasExplicitOutputConnection(node.id)) return true;
-            return !hasDownstreamGenerator(node.id);
+            // 統一行爲：生成節點始終可持有 output，避免用戶關閉 output 後，
+            // 因爲下游連接存在而無法再次看到輸出結果。
+            return true;
         }
         function outputForNode(node, dx=460){
             if(!node || !shouldCreateOutputForNode(node)) return null;
-            let out = connections
-                .filter(c => c.from === node.id)
-                .map(c => nodes.find(n => n.id === c.to))
-                .find(n => n?.type === 'output');
+            // 若存在多個 output，優先使用最近建立（連接數組末尾）的那一個，
+            // 避免結果寫進舊 output 導致用戶看不到。
+            const outConn = [...connections].reverse().find(c => {
+                if(c.from !== node.id) return false;
+                const target = nodes.find(n => n.id === c.to);
+                return target?.type === 'output';
+            });
+            let out = outConn ? nodes.find(n => n.id === outConn.to) : null;
+            outputDebug('outputForNode.lookup', { nodeId: node.id, linkedOutIds: linkedOutputIdsForNode(node.id), pickedOutId: out?.id || '' });
             if(!out){
                 out = {id:uid('out'), type:'output', x:node.x + dx, y:node.y, images:[]};
+                hydrateOutputFromGenerator(out, node);
                 nodes.push(out);
                 connections.push({id:uid('c'), from:node.id, to:out.id});
+                outputDebug('outputForNode.create', { nodeId: node.id, newOutId: out.id, backfilled: (out.images || []).length });
             }
             return out;
+        }
+        function hydrateOutputFromGenerator(out, source){
+            if(!out || out.type !== 'output' || !source) return;
+            if((out.images || []).length) return;
+            const backfill = (source.generatedOutputs || [])
+                .map(outputUrlValue)
+                .filter(Boolean)
+                .map(url => ({url, viewed:true, runMs:0, run:null}));
+            if(backfill.length) out.images = backfill;
+            outputDebug('hydrateOutputFromGenerator', {
+                outId: out.id,
+                sourceId: source.id,
+                sourceGenerated: (source.generatedOutputs || []).map(outputUrlValue).filter(Boolean).length,
+                applied: backfill.length
+            });
+        }
+        function outputTargetsForNode(node, dx=460){
+            if(!node) return [];
+            const linked = connections
+                .filter(c => c.from === node.id)
+                .map(c => nodes.find(n => n.id === c.to))
+                .filter(n => n?.type === 'output');
+            if(linked.length){
+                const uniq = new Map();
+                linked.forEach(out => { if(out?.id) uniq.set(out.id, out); });
+                return [...uniq.values()];
+            }
+            const out = outputForNode(node, dx);
+            return out ? [out] : [];
         }
         function generatedImageRefs(node){
             return (node?.generatedOutputs || [])
@@ -6423,9 +6614,21 @@
         function generatorSources(gen){
             return connections.filter(c => c.to === gen.id).map(c => nodes.find(n => n.id === c.from)).filter(Boolean).map(n => {
                 if(n.type === 'output' && (n.images||[]).length){
-                    // 从 output 节点取最新一张图当作 reference 给下游
-                    const last = [...n.images].reverse().map(outputUrlValue).find(Boolean);
-                    if(last) return {id:n.id, type:'outputImage', label:'上游输出', preview:last, refs:[{url:last, name:'output.png'}], prompt:''};
+                    // output 直接作爲下游輸入：傳遞全部圖片，而不是僅最後一張。
+                    const urls = (n.images || [])
+                        .map(outputUrlValue)
+                        .filter(Boolean)
+                        .filter(url => !isVideoUrl(url));
+                    if(urls.length){
+                        return urls.map((url, i) => ({
+                            id:`${n.id}:output:${i}:${url}`,
+                            type:'outputImage',
+                            label:`上游輸出 ${i + 1}`,
+                            preview:url,
+                            refs:[{url, name:outputImageName(url) || `output-${i + 1}.png`}],
+                            prompt:''
+                        }));
+                    }
                 }
                 if(CANVAS_IMAGE_OUTPUT_TYPES.includes(n.type)){
                     const refs = generatedImageRefs(n);
@@ -6467,7 +6670,7 @@
                     }
                     return sources;
                 }
-                if(n.type === 'prompt') return {id:n.id, type:'prompt', label:(n.text || '提示词').slice(0, 32), refs:[], prompt:n.text || ''};
+                if(n.type === 'prompt') return {id:n.id, type:'prompt', label:(n.text || '提示詞').slice(0, 32), refs:[], prompt:n.text || ''};
                 if(n.type === 'loop') {
                     const prompt = renderLoopPrompt(n);
                     const refs = loopInputImageRefs(n);
@@ -6486,16 +6689,28 @@
                 }
                 if(n.type === 'promptGroup') {
                     const prompts = (n.items || []).map(id => nodes.find(x => x.id === id)).filter(Boolean).map(p => p.text || '').filter(Boolean);
-                    return {id:n.id, type:'promptGroup', label:`提示词 ${prompts.length} 个`, refs:[], prompt:prompts.join('\n\n')};
+                    return {id:n.id, type:'promptGroup', label:`提示詞 ${prompts.length} 個`, refs:[], prompt:prompts.join('\n\n')};
                 }
                 if(n.type === 'llm' && (n.mode || 'node') === 'node' && n.outputText) return {id:n.id, type:'llm', label:(n.outputText || 'LLM').slice(0, 32), refs:[], prompt:n.outputText || ''};
                 return null;
             }).flat().filter(Boolean);
         }
         function orderedSources(gen, sources){
-            gen.inputs = (gen.inputs || []).filter(id => sources.some(s => s.id === id));
-            sources.forEach(s => { if(!gen.inputs.includes(s.id)) gen.inputs.push(s.id); });
-            return gen.inputs.map(id => sources.find(s => s.id === id)).filter(Boolean);
+            const blocked = new Set(gen.blockedInputSourceIds || []);
+            const visibleSources = (sources || []).filter(s => !blocked.has(s.id));
+            gen.blockedInputSourceIds = [...blocked].filter(id => (sources || []).some(s => s.id === id));
+            gen.inputs = (gen.inputs || []).filter(id => visibleSources.some(s => s.id === id));
+            visibleSources.forEach(s => { if(!gen.inputs.includes(s.id)) gen.inputs.push(s.id); });
+            return gen.inputs.map(id => visibleSources.find(s => s.id === id)).filter(Boolean);
+        }
+        function removeInputSource(gen, sourceId){
+            if(!gen || !sourceId) return;
+            const blocked = new Set(gen.blockedInputSourceIds || []);
+            blocked.add(sourceId);
+            gen.blockedInputSourceIds = [...blocked];
+            gen.inputs = (gen.inputs || []).filter(id => id !== sourceId);
+            render();
+            scheduleSave();
         }
         function reorderInput(gen, movedId, targetId){
             if(!movedId || movedId === targetId) return;
@@ -6532,6 +6747,12 @@
             });
         }
         async function runGenerator(genId, opts={}){
+            if(!isNodeTypeEnabled('generator')){
+                const msg = featureDisabledMessage(tr('canvas.apiGenerate'));
+                if(opts?.cascade) throw new Error(msg);
+                alert(msg);
+                return;
+            }
             const gen = nodes.find(n => n.id === genId);
             if(!gen || (gen.running && !opts.cascade)) return;
             const sources = orderedSources(gen, generatorSources(gen));
@@ -6560,6 +6781,10 @@
                     ...taskInfos.map((task, index) => makePending(pendingIds[index], run, {
                         canvasTaskId:task.task_id,
                         canvasTaskType:'online-image',
+                        status:task.status || 'queued',
+                        phase:task.phase || 'queued',
+                        message:task.message || '',
+                        progress:Number.isFinite(Number(task.progress)) ? Number(task.progress) : null,
                         appendGenerated:Boolean(opts.cascade)
                     }))
                 ];
@@ -6695,25 +6920,25 @@
         }
         async function uploadCanvasUrlToComfy(url){
             const blob = await fetch(url).then(r => {
-                if(!r.ok) throw new Error(langIsEn() ? 'Image read failed' : '图片读取失败');
+                if(!r.ok) throw new Error(langIsEn() ? 'Image read failed' : '圖片讀取失敗');
                 return r.blob();
             });
             const filename = (url || '').split('/').pop()?.split('?')[0] || `canvas_${Date.now()}.png`;
             const form = new FormData();
             form.append('files', blob, filename);
             const data = await fetch('/api/upload', {method:'POST', body:form}).then(async r => {
-                if(!r.ok) throw new Error(await responseErrorMessage(r, langIsEn() ? 'Image upload to ComfyUI failed' : '图片上传到 ComfyUI 失败'));
+                if(!r.ok) throw new Error(await responseErrorMessage(r, langIsEn() ? 'Image upload to ComfyUI failed' : '圖片上傳到 ComfyUI 失敗'));
                 return r.json();
             });
             return data.files?.[0]?.comfy_name || filename;
         }
         async function comfyNameForRef(ref){
             if(ref.comfy_name) return ref.comfy_name;
-            if(!ref.url) throw new Error(langIsEn() ? 'Missing input image' : '缺少输入图片');
+            if(!ref.url) throw new Error(langIsEn() ? 'Missing input image' : '缺少輸入圖片');
             return uploadCanvasUrlToComfy(ref.url);
         }
         async function runComfyUpscale(imageUrl, resolution){
-            if(!imageUrl) throw new Error(actionFailed('studio.superResolution', langIsEn() ? 'missing input image' : '缺少输入图片'));
+            if(!imageUrl) throw new Error(actionFailed('studio.superResolution', langIsEn() ? 'missing input image' : '缺少輸入圖片'));
             const nextInput = await uploadCanvasUrlToComfy(imageUrl);
             const upscale = await fetch('/api/generate', {
                 method:'POST',
@@ -7327,18 +7552,24 @@
                 })
             }).then(async r => {
                 if(!r.ok){
-                    throw new Error(await responseErrorMessage(r, 'LLM 运行失败'));
+                    throw new Error(await responseErrorMessage(r, 'LLM 運行失敗'));
                 }
                 return r.json();
             });
             return result.text || '';
         }
         async function runLLMNode(nodeId, opts={}){
+            if(!isNodeTypeEnabled('llm')){
+                const msg = featureDisabledMessage('LLM');
+                if(opts?.cascade) throw new Error(msg);
+                alert(msg);
+                return;
+            }
             const node = nodes.find(n => n.id === nodeId);
             if(!node || (node.running && !opts.cascade)) return;
             const input = llmInputText(node) || node.userInput || '';
             if(!input){
-                if(opts.cascade) throw new Error('LLM 缺少提示词输入');
+                if(opts.cascade) throw new Error('LLM 缺少提示詞輸入');
                 alert(tr('canvas.needPromptToLLM')); return;
             }
             if(!opts.cascade){ node.running = true; refreshNodes([node.id]); }
@@ -7353,10 +7584,10 @@
                 node.runStatus = 'failed'; node.runError = err.message || String(err);
                 refreshNodes([node.id]);
                 if(opts.cascade) throw err;
-                alert(err.message || 'LLM 运行失败');
+                alert(err.message || 'LLM 運行失敗');
             }
         }
-        // 判断是不是「链尾」节点：没有下游生成节点（直接相连或经 Output 中转都算）
+        // 判斷是不是「鏈尾」節點：沒有下游生成節點（直接相連或經 Output 中轉都算）
         function isTerminalGenerator(nodeId){
             const GEN_TYPES = ['generator','msgen','comfy','llm','video'];
             for(const c of connections.filter(c => c.from === nodeId)){
@@ -7393,26 +7624,26 @@
             return (terminal || candidates.sort((a, b) => b.depth - a.depth)[0])?.id || '';
         }
         function cascadeBtnHtml(node){
-            // 仅链尾节点显示一键运行
+            // 僅鏈尾節點顯示一鍵運行
             if(!isTerminalGenerator(node.id)) return '';
-            // 也要求至少有上游生成节点，否则没意义
+            // 也要求至少有上游生成節點，否則沒意義
             const order = computeCascadeOrder(node.id);
             const loop = resolveCascadeLoop(node.id);
             if(order.length <= 1 && !loop) return '';
             const suffix = loop ? ` × ${loop.count} ${tr('canvas.loopRounds')}` : '';
-            // 仅在以串行模式启动的运行中显示停止按钮
+            // 僅在以串行模式啓動的運行中顯示停止按鈕
             if(cascadeSerialIds.has(node.id)){
                 const stopping = cascadeStopIds.has(node.id);
-                return `<button class="gen-cascade-btn gen-cascade-stop" type="button" data-cascade-stop="${node.id}" ${stopping ? 'disabled' : ''}><i data-lucide="square" class="w-4 h-4"></i><span>${stopping ? '停止中…' : '停止循环'}</span></button>`;
+                return `<button class="gen-cascade-btn gen-cascade-stop" type="button" data-cascade-stop="${node.id}" ${stopping ? 'disabled' : ''}><i data-lucide="square" class="w-4 h-4"></i><span>${stopping ? '停止中…' : '停止循環'}</span></button>`;
             }
-            return `<button class="gen-cascade-btn" type="button" data-cascade="${node.id}" title="一键运行整条工作流（追溯所有上游生成节点）"><i data-lucide="play-circle" class="w-4 h-4"></i><span>一键运行 ${order.length} 个节点${suffix}</span></button>`;
+            return `<button class="gen-cascade-btn" type="button" data-cascade="${node.id}" title="一鍵運行整條工作流（追溯所有上游生成節點）"><i data-lucide="play-circle" class="w-4 h-4"></i><span>一鍵運行 ${order.length} 個節點${suffix}</span></button>`;
         }
         function retryBarHtml(node){
-            // 只在一键运行模式中失败才显示；普通单节点失败直接弹 alert，不显示这条
+            // 只在一鍵運行模式中失敗才顯示；普通單節點失敗直接彈 alert，不顯示這條
             if(node.runStatus !== 'failed' || !node._cascadeFailed) return '';
             return `<div class="node-retry-bar" data-retry-bar>
                 <span class="node-retry-msg" title="${escapeAttr(node.runError||'')}">${escapeHtml((node.runError||tr('canvas.generationFailed')).slice(0,60))}</span>
-                <button class="node-retry-btn" type="button" data-retry="${node.id}">重试</button>
+                <button class="node-retry-btn" type="button" data-retry="${node.id}">重試</button>
                 <button class="node-stop-btn" type="button" data-stop="${node.id}">停止</button>
             </div>`;
         }
@@ -7434,14 +7665,12 @@
                 b.onclick = e => { e.stopPropagation(); cancelCascade(nodeId); };
             });
         }
-        // —— 一键运行：从目标节点反向追溯到所有上游生成节点，按拓扑顺序串行执行 ——
+        // —— 一鍵運行：從目標節點反向追溯到所有上游生成節點，按拓撲順序串行執行 ——
         function runCascadeNodeByType(node, opts={}){
             const runOpts = {cascade:true, ...opts};
-            if(node.type === 'generator') return runGenerator(node.id, runOpts);
             if(node.type === 'msgen') return runMsGenNode(node.id, runOpts);
             if(node.type === 'comfy') return runComfyNode(node.id, runOpts);
             if(node.type === 'ltxDirector') return runLTXDirectorNode(node.id, runOpts);
-            if(node.type === 'llm') return runLLMNode(node.id, runOpts);
             if(node.type === 'video') return runVideoNode(node.id, runOpts);
             return Promise.resolve();
         }
@@ -7468,7 +7697,7 @@
             return Promise.allSettled(workers);
         }
         function canvasRunTypes(){
-            return ['generator','msgen','comfy','ltxDirector','llm','video'];
+            return ['msgen','comfy','ltxDirector','video'];
         }
         function canvasWorkflowEdges(){
             const runTypes = canvasRunTypes();
@@ -7522,21 +7751,11 @@
             if(!node) return;
             clearStuckGeneratorRunning(node);
             if(node.running || cascadeRunningIds.has(nodeId)){
-                setStatus(langIsEn() ? 'This node is already running' : '该节点正在运行中');
+                setStatus(langIsEn() ? 'This node is already running' : '該節點正在運行中');
                 return;
             }
-            const order = computeConnectedWorkflowOrder(nodeId);
-            if(order.length > 1){
-                cascadeRunningIds.add(nodeId);
-                refreshNodes(order);
-                try {
-                    await runOneCascadePass(order);
-                } finally {
-                    cascadeRunningIds.delete(nodeId);
-                    refreshNodes(order);
-                }
-                return;
-            }
+            // 單節點運行按鈕應只運行當前節點；
+            // 多節點串行請使用「一鍵運行」按鈕（runNodeCascade）。
             return runCascadeNodeByType(node, {cascade:false});
         }
         function computeCascadeOrder(targetId){
@@ -7548,14 +7767,14 @@
                 visited.add(id);
                 const node = nodes.find(n => n.id === id);
                 if(!node) return;
-                // 找该节点的上游
+                // 找該節點的上游
                 connections.filter(c => c.to === id).forEach(c => {
                     const from = nodes.find(n => n.id === c.from);
                     if(!from) return;
                     if(GEN_TYPES.includes(from.type)){
                         dfs(from.id);
                     } else if(from.type === 'output'){
-                        // output 节点的上游是生成器
+                        // output 節點的上游是生成器
                         connections.filter(cc => cc.to === from.id).forEach(cc => {
                             const ff = nodes.find(n => n.id === cc.from);
                             if(ff && GEN_TYPES.includes(ff.type)) dfs(ff.id);
@@ -7600,11 +7819,11 @@
         async function runNodeCascade(nodeId){
             const target = nodes.find(n => n.id === nodeId);
             if(!target) return;
-            if(target.running){ alert('当前节点正在运行'); return; }
+            if(target.running){ alert('當前節點正在運行'); return; }
             cascadeRunningIds.add(nodeId);
             const order = computeCascadeOrder(nodeId);
             refreshNodes(cascadeUiNodeIds(nodeId, order));
-            if(!order.length){ alert('没有可运行的生成节点'); return; }
+            if(!order.length){ alert('沒有可運行的生成節點'); return; }
             const loop = resolveCascadeLoop(nodeId);
             const totalRounds = loop?.count || 1;
             const startIdx = Math.max(1, Number(loop?.node?.loopStart) || 1);
@@ -7721,7 +7940,7 @@
             cascadeStopIds.delete(nodeId);
             cascadeSerialIds.delete(nodeId);
             refreshNodes(cascadeUiNodeIds(nodeId, order));
-            // 全部完成：3 秒后清除状态徽章
+            // 全部完成：3 秒後清除狀態徽章
             setTimeout(() => {
                 order.forEach(id => {
                     const n = nodes.find(x => x.id === id);
@@ -7759,12 +7978,12 @@
                 }
             }
         }
-        // 失败重试：从该节点继续往下游跑
+        // 失敗重試：從該節點繼續往下游跑
         async function retryNodeAndDownstream(nodeId){
             const target = nodes.find(n => n.id === nodeId);
             if(!target) return;
             const order = computeCascadeOrder(nodeId);
-            // 只重跑从该节点开始的剩余链
+            // 只重跑從該節點開始的剩餘鏈
             const idx = order.indexOf(nodeId);
             const remain = idx >= 0 ? order.slice(idx) : [nodeId];
             try { await runOneCascadePass(remain); }
@@ -7778,7 +7997,7 @@
             }, 3000);
         }
         function cancelCascade(nodeId){
-            // 简单实现：把当前节点和上游 queued/failed 状态清掉（不能 abort 已发出的请求）
+            // 簡單實現：把當前節點和上游 queued/failed 狀態清掉（不能 abort 已發出的請求）
             const order = computeCascadeOrder(nodeId);
             order.forEach(id => {
                 const n = nodes.find(x => x.id === id);
@@ -7790,6 +8009,10 @@
         }
 
         async function runLLMChat(nodeId){
+            if(!isNodeTypeEnabled('llm')){
+                alert(featureDisabledMessage('LLM'));
+                return;
+            }
             const node = nodes.find(n => n.id === nodeId);
             if(!node || node.running) return;
             const message = (node.chatInput || '').trim();
@@ -7810,13 +8033,29 @@
             } catch(err) {
                 node.running = false;
                 refreshNodes([node.id]);
-                alert(err.message || 'LLM 运行失败');
+                alert(err.message || 'LLM 運行失敗');
             }
         }
 
         function deleteNode(id, event){
             event?.stopPropagation?.();
             const victim = nodes.find(n => n.id === id);
+            if(victim?.type === 'output'){
+                const upstream = connections
+                    .filter(c => c.to === id)
+                    .map(c => nodes.find(n => n.id === c.from))
+                    .filter(Boolean)
+                    .map(n => ({
+                        id: n.id,
+                        type: n.type,
+                        generatedOutputs: (n.generatedOutputs || []).map(outputUrlValue).filter(Boolean).length
+                    }));
+                outputDebug('deleteNode.output', {
+                    outId: id,
+                    imageCount: (victim.images || []).map(outputUrlValue).filter(Boolean).length,
+                    upstream
+                });
+            }
             destroyLTXEditor(victim);
             pushUndo();
             nodes = nodes.filter(n => n.id !== id);
@@ -7969,7 +8208,7 @@
                 const backendText = workflow || backend || '';
                 const subParts = [
                     date,
-                    `${langIsEn() ? 'outputs' : '输出'} ${(log.outputs || []).length}`,
+                    `${langIsEn() ? 'outputs' : '輸出'} ${(log.outputs || []).length}`,
                     idText ? `ID ${idText}` : '',
                     backendText,
                 ].filter(Boolean);
@@ -8019,7 +8258,87 @@
             logModal.classList.remove('open');
         }
         function makePending(id, run, task={}){
-            return {id, startedAt:nowMs(), run, ...task};
+            return {
+                id,
+                startedAt:nowMs(),
+                run,
+                taskStatus: task.status || 'running',
+                taskPhase: task.phase || 'processing',
+                taskMessage: task.message || '',
+                progress: Number.isFinite(Number(task.progress)) ? Number(task.progress) : null,
+                pollCount: 0,
+                ...task
+            };
+        }
+        function taskPhaseLabel(phase=''){
+            const key = String(phase || '').toLowerCase();
+            const labels = {
+                queued: langIsEn() ? 'Queued' : '排隊中',
+                dispatching: langIsEn() ? 'Dispatching task' : '啟動任務中',
+                prepare: langIsEn() ? 'Preparing params' : '準備參數中',
+                requesting_upstream: langIsEn() ? 'Submitting request' : '提交上游請求中',
+                waiting_upstream: langIsEn() ? 'Waiting upstream image' : '等待上游生圖中',
+                saving_output: langIsEn() ? 'Saving output image' : '保存輸出圖片中',
+                finalizing: langIsEn() ? 'Finalizing result' : '整理輸出結果中',
+                processing: langIsEn() ? 'Processing' : '處理中',
+                done: langIsEn() ? 'Done' : '已完成',
+                failed: langIsEn() ? 'Failed' : '失敗',
+            };
+            return labels[key] || (langIsEn() ? 'Processing' : '處理中');
+        }
+        function pendingProgressPercent(pending){
+            const explicit = Number(pending?.progress);
+            if(Number.isFinite(explicit)) return Math.max(0, Math.min(100, explicit));
+            const phase = String(pending?.taskPhase || '').toLowerCase();
+            const elapsedSec = Math.max(0, (nowMs() - Number(pending?.startedAt || nowMs())) / 1000);
+            const phaseBase = {
+                queued: 4,
+                dispatching: 10,
+                prepare: 16,
+                requesting_upstream: 24,
+                waiting_upstream: 42,
+                saving_output: 88,
+                finalizing: 96,
+                processing: 35,
+                done: 100,
+                failed: 100,
+            };
+            const base = phaseBase[phase] ?? (String(pending?.taskStatus || '').toLowerCase() === 'queued' ? 4 : 24);
+            const cap = phase === 'waiting_upstream' ? 92 : 97;
+            const speed = phase === 'waiting_upstream' ? 0.45 : 0.9;
+            const auto = Math.min(cap, base + elapsedSec * speed);
+            return Math.max(base, auto);
+        }
+        function pendingMetaText(pending){
+            const polls = Number(pending?.pollCount || 0);
+            if(!polls) return '';
+            return langIsEn() ? `poll x${polls}` : `輪詢 ${polls} 次`;
+        }
+        function renderPendingOutputWrap(pending){
+            const stage = escapeHtml(pending?.taskMessage || taskPhaseLabel(pending?.taskPhase));
+            const percent = Math.round(pendingProgressPercent(pending));
+            const meta = escapeHtml(pendingMetaText(pending));
+            return `<div class="output-img-wrap loading-wrap" data-pending-id="${escapeAttr(pending?.id || '')}">
+                <span class="output-time-pill running">${formatRunDuration(nowMs() - Number(pending?.startedAt || nowMs()))}</span>
+                <div class="output-spinner"></div>
+                <div class="output-pending-stage">${stage}</div>
+                <div class="output-pending-progress"><span style="width:${percent}%"></span></div>
+                <div class="output-pending-meta">${meta}</div>
+                <button class="output-del" title="${tr('common.delete')}">×</button>
+            </div>`;
+        }
+        function updatePendingTaskStatus(taskId, taskData){
+            const found = findPendingTask(taskId);
+            if(!found) return;
+            const {out, pending} = found;
+            pending.taskStatus = taskData?.status || pending.taskStatus || 'running';
+            pending.taskPhase = taskData?.phase || pending.taskPhase || '';
+            pending.taskMessage = taskData?.message || pending.taskMessage || '';
+            const progress = Number(taskData?.progress);
+            if(Number.isFinite(progress)) pending.progress = Math.max(0, Math.min(100, progress));
+            pending.pollCount = Number(pending.pollCount || 0) + 1;
+            pending.lastUpdateAt = nowMs();
+            if(!refreshOutputNodeContent(out)) refreshNodes([out.id]);
         }
         function mergeGeneratedOutputs(node, outputs, append=false){
             if(!node) return;
@@ -8074,6 +8393,7 @@
                     const res = await fetch(`/api/canvas-image-tasks/${encodeURIComponent(taskId)}`);
                     if(!res.ok) throw new Error(await responseErrorMessage(res, tr('canvas.generationFailed')));
                     const data = await res.json();
+                    updatePendingTaskStatus(taskId, data);
                     if(data.status === 'succeeded'){
                         completeCanvasImageTask(taskId, data.result || {});
                         return 'succeeded';
@@ -8082,7 +8402,7 @@
                         failCanvasImageTask(taskId, data.error || tr('canvas.generationFailed'));
                         return 'failed';
                     }
-                    await sleep(1800);
+                    await sleep(1200);
                 }
             } catch(err) {
                 failCanvasImageTask(taskId, err.message || String(err));
@@ -8187,6 +8507,7 @@
         function appendOutputImages(out, images, compareRef, metas=[], layout=null){
             const list = (images || []).filter(Boolean);
             if(!out || !list.length) return;
+            const beforeCount = (out.images || []).map(outputUrlValue).filter(Boolean).length;
             if(layout?.type === 'grid-split'){
                 out.images = [];
                 out.outputLayout = layout;
@@ -8205,6 +8526,8 @@
                     out.imageComparisons[url] = {url:compareRef.url, name:compareRef.name || 'input image'};
                 });
             }
+            const afterCount = (out.images || []).map(outputUrlValue).filter(Boolean).length;
+            outputDebug('appendOutputImages', { outId: out.id, added: list.length, beforeCount, afterCount });
         }
         function outputCompareUrlFor(url, out){
             const source = out?.imageComparisons?.[url];
@@ -8268,7 +8591,7 @@
         }
         async function downloadUrl(url, filename){
             const res = await fetch(url);
-            if(!res.ok) throw new Error('下载失败');
+            if(!res.ok) throw new Error('下載失敗');
             const blob = await res.blob();
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -8464,7 +8787,7 @@
                 outputPreview.ondblclick = null;
                 outputDownloadBtn.onclick = e => {
                     e.stopPropagation();
-                    downloadUrl(url, outputDownloadName(url)).catch(err => alert(err.message || '下载失败'));
+                    downloadUrl(url, outputDownloadName(url)).catch(err => alert(err.message || '下載失敗'));
                 };
                 outputLightbox.classList.add('open');
                 refreshIcons();
@@ -8488,7 +8811,7 @@
             };
             outputDownloadBtn.onclick = e => {
                 e.stopPropagation();
-                downloadUrl(url, outputDownloadName(url)).catch(err => alert(err.message || '下载失败'));
+                downloadUrl(url, outputDownloadName(url)).catch(err => alert(err.message || '下載失敗'));
             };
             outputLightbox.classList.add('open');
             refreshIcons();
@@ -8528,7 +8851,8 @@
             nodes.push(group);
             if(targets.length) handoffExistingInputsToGroup(group, targets);
             selected.clear();
-            selected.add(group.id);
+            if(targets.length) targets.forEach(n => selected.add(n.id));
+            else selected.add(group.id);
             syncGeneratorInputs();
             refreshGeneratorInputViews();
             render();
@@ -8713,7 +9037,7 @@
             if(isGroup){
                 (dragTarget.items || []).map(id => nodes.find(n => n.id === id)).forEach(collect);
             }
-            // 如果被拖节点在多选里，所有其他选中节点（含其组成员）一起移动
+            // 如果被拖節點在多選裏，所有其他選中節點（含其組成員）一起移動
             if(selected.has(dragTarget.id) && selected.size > 1){
                 [...selected].forEach(id => collect(nodes.find(n => n.id === id)));
             }
@@ -8817,8 +9141,15 @@
                         const p = screenToWorld(e2.clientX, e2.clientY);
                         pushUndo();
                         const out = {id:uid('out'), type:'output', x:p.x, y:p.y - 63, images:[]};
+                        hydrateOutputFromGenerator(out, source);
                         nodes.push(out);
                         connections.push({id:uid('c'), from:source.id, to:out.id});
+                        outputDebug('startLink.autoCreateOutput', {
+                            sourceId: source.id,
+                            sourceType: source.type,
+                            outId: out.id,
+                            outImages: (out.images || []).map(outputUrlValue).filter(Boolean).length
+                        });
                         syncGeneratorInputs();
                         scheduleSave();
                         render();
@@ -8887,12 +9218,10 @@
             }
             if(to.type === 'loop'){
                 const allowImage = Boolean(to.imageInput) && ['image','group','output'].includes(from.type);
-                const allowPrompt = Boolean(to.showPrompt) && ['prompt','promptGroup','loop','llm'].includes(from.type);
+                const allowPrompt = Boolean(to.showPrompt) && ['prompt','promptGroup','loop'].includes(from.type);
                 return allowImage || allowPrompt;
             }
-            if(to.type === 'llm') return ['prompt','loop','promptGroup','llm','image','group','output'].includes(from.type);
-            if(from.type === 'llm') return CANVAS_GENERATOR_TYPES.includes(to.type);
-            return CANVAS_GENERATOR_TYPES.includes(to.type) && ['image','prompt','loop','group','promptGroup','output','llm'].includes(from.type);
+            return CANVAS_GENERATOR_TYPES.includes(to.type) && ['image','prompt','loop','group','promptGroup','output'].includes(from.type);
         }
         function sanitizeConnections(){
             connections = (connections || []).filter(c => canConnect(c.from, c.to));
@@ -8900,7 +9229,7 @@
         function endDrag(event=null){
             if(dragNode){
                 const moved = [dragNode.node, ...(dragNode.children || []).map(c => c.node)].filter(Boolean);
-                // 拖动 group/promptGroup 自身时不重新评估（成员跟着一起走，包含关系不变）
+                // 拖動 group/promptGroup 自身時不重新評估（成員跟着一起走，包含關係不變）
                 const draggedGroup = moved.some(n => n.type === 'group' || n.type === 'promptGroup');
                 if(!draggedGroup) updateGroupMembership(moved);
             }
@@ -9116,6 +9445,18 @@
             renderSelectionHub();
             scheduleMinimapRender();
         }
+        function groupAtWorldPoint(point){
+            if(!point) return null;
+            const groups = nodes.filter(n => n.type === 'group' || n.type === 'promptGroup');
+            for(let i = groups.length - 1; i >= 0; i--){
+                const g = groups[i];
+                const r = nodeRect(g);
+                if(point.x >= r.x && point.x <= r.x + r.w && point.y >= r.y && point.y <= r.y + r.h){
+                    return g;
+                }
+            }
+            return null;
+        }
         function pathEl(x1,y1,x2,y2,cls){
             const p = document.createElementNS('http://www.w3.org/2000/svg','path');
             const dx = Math.max(80, Math.abs(x2 - x1) * .45);
@@ -9285,6 +9626,17 @@
                 startSelection(e);
                 return;
             }
+            const clickPoint = screenToWorld(e.clientX, e.clientY);
+            const hitGroup = groupAtWorldPoint(clickPoint);
+            if(hitGroup){
+                if(!selected.has(hitGroup.id)){
+                    selected.clear();
+                    selected.add(hitGroup.id);
+                    refreshSelectionVisuals();
+                }
+                startNodeDrag(e, hitGroup);
+                return;
+            }
             if(selected.size){
                 selected.clear();
                 refreshSelectionVisuals();
@@ -9386,10 +9738,10 @@
             if(e.key === 'Escape' && outputLightbox.classList.contains('open')) { closeOutputLightbox(); return; }
             if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') { e.preventDefault(); groupSelectedImages(); }
             if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
-                // 在输入框/可编辑元素里时，让浏览器原生 Ctrl+C 工作
+                // 在輸入框/可編輯元素裏時，讓瀏覽器原生 Ctrl+C 工作
                 const tag = document.activeElement?.tagName;
                 if(tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
-                // 用户在页面任意位置选中了文本时，也不要拦截
+                // 用戶在頁面任意位置選中了文本時，也不要攔截
                 const sel = window.getSelection && window.getSelection();
                 if(sel && sel.toString().length > 0) return;
                 e.preventDefault();
@@ -9439,7 +9791,7 @@
         function deleteSelectedNodes(){
             if(!canvas || selected.size === 0) return;
             pushUndo();
-            // 收集所有需要删除的 id（含 group 的 items 一并删除）
+            // 收集所有需要刪除的 id（含 group 的 items 一併刪除）
             const toDelete = new Set();
             const collect = id => {
                 if(toDelete.has(id)) return;

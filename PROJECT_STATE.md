@@ -173,3 +173,11 @@ curl -I https://canvas.qwenr.com/
   - commit：文件自身 commit 以 GitHub / `git log` 為準，避免為了寫入自己的 commit hash 造成反覆改檔。
   - 已推到 GitHub：是，已納入本次 `PROJECT_STATE.md` 文件提交。
   - 已部署 VPS：否，這次只是本機文件規則更新。
+
+- 2026-05-24：修正普通畫布工具列漏掉 `API生成` 入口。
+  - 原因：`static/canvas.html` 仍有 `addGeneratorNode()` 與 `generator` 節點邏輯，但上方快捷工具列和新增選單漏掉 API 生成按鈕，使用者只能看到 `MS生成`、`視頻生成`、`ComfyUI` 等入口。
+  - 修正：在快捷工具列補回 `API生成`，並在右鍵/新增選單補回 `API生成`，都接到既有 `generator` 節點。
+  - 驗證：用靜態 HTTP server 開啟 `http://127.0.0.1:8000/static/canvas.html`，確認 `#quickToolbar` 與 `#createMenu` DOM 都包含 `API生成`。完整 FastAPI 本機驗證未完成，因全域 Python 的 FastAPI/Pydantic 版本不相容、專案內嵌 Python 缺 `requests`。
+  - commit：待建立。
+  - 已推到 GitHub：待確認。
+  - 已部署 VPS：待確認。

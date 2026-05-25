@@ -212,7 +212,7 @@ curl -I https://canvas.qwenr.com/
 - 2026-05-25：修正無限畫布 API 生成停用與提示詞庫保存範圍。
   - 原因：普通畫布前端仍把 `generator` 放在 `DISABLED_CANVAS_NODE_TYPES`，導致點 API 生成時顯示「API生成 已停用」；提示詞庫只存瀏覽器 localStorage，不適合未來多會員，也可能因瀏覽器狀態看起來像消失。
   - 修正：重新啟用 `generator` 節點；新增 `/api/prompt-library` 讀寫 API，後端依登入會員 user id 分開保存提示詞庫；前端改為後端同步，並保留每會員分開的 localStorage 備援與舊全域 localStorage 一次性匯入。
-  - commit：待提交。
-  - 已推到 GitHub：待推送。
-  - 已部署 VPS：待部署。
-  - 驗證：待完成。
+  - commit：`193d8c4 Fix canvas API generation and prompt library persistence`
+  - 已推到 GitHub：是。
+  - 已部署 VPS：是，已同步 `main.py` 與 `static/canvas.html` 到 `/opt/canvas/app/` 並執行 `docker compose up -d --build`。
+  - 驗證：本地 `python -m py_compile main.py` 通過，`static/canvas.html` 內 2 個 script 語法檢查通過；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `DISABLED_CANVAS_NODE_TYPES` 只剩 `llm`，`/app/main.py` 與 `/app/static/canvas.html` 都包含 `/api/prompt-library`；未登入打 `/api/prompt-library` 回 401；容器內函式測試確認 user 1 / user 2 的提示詞庫互相隔離。

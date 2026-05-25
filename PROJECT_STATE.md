@@ -216,3 +216,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已同步 `main.py` 與 `static/canvas.html` 到 `/opt/canvas/app/` 並執行 `docker compose up -d --build`。
   - 驗證：本地 `python -m py_compile main.py` 通過，`static/canvas.html` 內 2 個 script 語法檢查通過；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `DISABLED_CANVAS_NODE_TYPES` 只剩 `llm`，`/app/main.py` 與 `/app/static/canvas.html` 都包含 `/api/prompt-library`；未登入打 `/api/prompt-library` 回 401；容器內函式測試確認 user 1 / user 2 的提示詞庫互相隔離。
+
+- 2026-05-25：修正主頁載入無限畫布時仍可能吃到舊版 `canvas.html` 快取。
+  - 原因：`static/index.html` 的無限畫布 iframe 仍使用 `/static/canvas.html?v=2026.05.24.11`，瀏覽器可能繼續載入舊版前端，因此使用者仍看到「API生成 已停用」。
+  - 修正：將 `frame-canvas` 的 cache-busting 版本更新為 `/static/canvas.html?v=2026.05.25.2`，強制登入後主介面載入新版無限畫布。
+  - commit：待提交。
+  - 已推到 GitHub：待推送。
+  - 已部署 VPS：待部署。
+  - 驗證：待完成。

@@ -200,3 +200,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已只同步 `static/canvas.html` 到 `/opt/canvas/app/static/canvas.html` 並執行 `docker compose up -d --build`。
   - 驗證：本地 Playwright 靜態頁測試確認「提示詞庫」按鈕、modal、保存、localStorage、列表卡片與「套用 / 新增到畫布 / 編輯 / 刪除」按鈕可渲染；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`，容器內 `/app/static/canvas.html` 已包含 `promptLibraryModal`、`PROMPT_LIBRARY_KEY` 與「提示詞庫」。
+
+- 2026-05-25：修正登入後主介面瀏覽器標籤品牌名稱。
+  - 原因：未登入的登入頁標籤與登入框已顯示 `kiki studio`，但登入後主介面 `static/index.html` 的 `<title>` 仍是舊的 `AI Studio`。
+  - 修正：將 `static/index.html` 的 `<title>` 改為 `KIKI Studio`。
+  - commit：待提交。
+  - 已推到 GitHub：待推送。
+  - 已部署 VPS：待部署。
+  - 驗證：待完成。

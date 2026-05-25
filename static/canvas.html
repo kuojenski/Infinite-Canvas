@@ -1141,7 +1141,7 @@
             return langIsEn() ? `${label} failed${detail ? `: ${detail}` : ''}` : `${label}失敗${detail ? `：${detail}` : ''}`;
         }
         function noReturnedImage(labelKey){ return langIsEn() ? `${tr(labelKey)} failed: no image returned` : `${tr(labelKey)}失敗：未返回圖片`; }
-        const DISABLED_CANVAS_NODE_TYPES = new Set(['generator', 'llm']);
+        const DISABLED_CANVAS_NODE_TYPES = new Set(['llm']);
         const IMAGE_EDIT_ENABLED = false;
         function isNodeTypeEnabled(type){
             return !DISABLED_CANVAS_NODE_TYPES.has(String(type || '').trim());
@@ -1322,6 +1322,7 @@
         const cascadeSerialIds = new Set(); // 記錄以串行循環模式啓動的運行，用於停止按鈕
         let promptLibrary = [];
         let editingPromptLibraryId = '';
+        let promptLibraryStorageKey = '';
         let cropState = null;
         let cropDrag = null;
         let imageEditMode = 'crop';
@@ -1368,6 +1369,8 @@
         const MANAGED_CHAT_MODELS_KEY = 'canvas_chat_models_ordered';
         const CANVAS_THEME_KEY = 'canvas_theme';
         const PROMPT_LIBRARY_KEY = 'canvas_prompt_library_v1';
+        const PROMPT_LIBRARY_API = '/api/prompt-library';
+        const PROMPT_LIBRARY_LEGACY_IMPORTED_KEY = 'canvas_prompt_library_legacy_imported';
         const QUICK_TOOLBAR_COLLAPSED_KEY = 'canvas_quick_toolbar_collapsed';
         const DEFAULT_VIDEO_MODELS = [
             // Veo
@@ -1422,24 +1425,99 @@
             const node = nodes.find(n => n.id === id);
             return node?.type === 'prompt' ? node : null;
         }
-        function loadPromptLibrary(){
+        function normalizePromptLibraryItems(raw){
+            return Array.isArray(raw)
+                ? raw.filter(item => item && typeof item === 'object').map(item => ({
+                    id:/^[a-zA-Z0-9_-]+$/.test(String(item.id || '')) ? String(item.id) : uid('pl'),
+                    name:String(item.name || '').trim(),
+                    text:String(item.text || ''),
+                    updatedAt:Number(item.updatedAt || Date.now())
+                })).filter(item => item.text.trim())
+                : [];
+        }
+        function mergePromptLibraryItems(remoteItems, localItems){
+            const byId = new Map();
+            const byContent = new Set();
+            [...remoteItems, ...localItems].forEach(item => {
+                const normalized = normalizePromptLibraryItems([item])[0];
+                if(!normalized) return;
+                const contentKey = `${normalized.name.trim()}\n${normalized.text.trim()}`;
+                const existing = byId.get(normalized.id);
+                if(existing){
+                    if(Number(normalized.updatedAt || 0) > Number(existing.updatedAt || 0)) byId.set(normalized.id, normalized);
+                    return;
+                }
+                if(byContent.has(contentKey)) return;
+                byContent.add(contentKey);
+                byId.set(normalized.id, normalized);
+            });
+            return [...byId.values()].sort((a, b) => Number(b.updatedAt || 0) - Number(a.updatedAt || 0));
+        }
+        function promptLibraryLocalKey(ownerKey=''){
+            const clean = String(ownerKey || '').replace(/[^a-zA-Z0-9_-]/g, '');
+            return clean ? `${PROMPT_LIBRARY_KEY}_${clean}` : PROMPT_LIBRARY_KEY;
+        }
+        function promptLibraryLegacyImportedKey(ownerKey=''){
+            const clean = String(ownerKey || '').replace(/[^a-zA-Z0-9_-]/g, '');
+            return clean ? `${PROMPT_LIBRARY_LEGACY_IMPORTED_KEY}_${clean}` : PROMPT_LIBRARY_LEGACY_IMPORTED_KEY;
+        }
+        function loadLocalPromptLibrary(key=promptLibraryStorageKey || PROMPT_LIBRARY_KEY){
             try {
-                const raw = JSON.parse(localStorage.getItem(PROMPT_LIBRARY_KEY) || '[]');
-                promptLibrary = Array.isArray(raw)
-                    ? raw.filter(item => item && typeof item === 'object').map(item => ({
-                        id:/^[a-zA-Z0-9_-]+$/.test(String(item.id || '')) ? String(item.id) : uid('pl'),
-                        name:String(item.name || '').trim(),
-                        text:String(item.text || ''),
-                        updatedAt:Number(item.updatedAt || Date.now())
-                    })).filter(item => item.text.trim())
-                    : [];
+                const raw = JSON.parse(localStorage.getItem(key) || '[]');
+                return normalizePromptLibraryItems(raw);
             } catch(e) {
-                promptLibrary = [];
+                return [];
+            }
+        }
+        async function loadPromptLibrary(){
+            let ownerKey = '';
+            let remoteItems = [];
+            try {
+                const res = await fetch(PROMPT_LIBRARY_API, {cache:'no-store'});
+                if(!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                ownerKey = data.owner_key || '';
+                remoteItems = normalizePromptLibraryItems(data.entries || []);
+                promptLibraryStorageKey = promptLibraryLocalKey(ownerKey);
+                const localItems = loadLocalPromptLibrary(promptLibraryStorageKey);
+                const legacyImportedKey = promptLibraryLegacyImportedKey(ownerKey);
+                const shouldImportLegacy = ownerKey && !localStorage.getItem(legacyImportedKey);
+                const legacyItems = shouldImportLegacy ? loadLocalPromptLibrary(PROMPT_LIBRARY_KEY) : [];
+                const merged = mergePromptLibraryItems(remoteItems, localItems.concat(legacyItems));
+                promptLibrary = merged;
+                localStorage.setItem(promptLibraryStorageKey, JSON.stringify(promptLibrary));
+                if((localItems.length || legacyItems.length) && JSON.stringify(merged) !== JSON.stringify(remoteItems)){
+                    await savePromptLibrary();
+                }
+                if(legacyItems.length){
+                    localStorage.setItem(legacyImportedKey, '1');
+                    localStorage.removeItem(PROMPT_LIBRARY_KEY);
+                }
+            } catch(e) {
+                console.warn('Prompt library server sync failed, using local fallback', e);
+                promptLibraryStorageKey = promptLibraryStorageKey || PROMPT_LIBRARY_KEY;
+                promptLibrary = loadLocalPromptLibrary(promptLibraryStorageKey);
             }
             return promptLibrary;
         }
-        function savePromptLibrary(){
-            localStorage.setItem(PROMPT_LIBRARY_KEY, JSON.stringify(promptLibrary));
+        async function savePromptLibrary({localOnly=false}={}){
+            promptLibraryStorageKey = promptLibraryStorageKey || PROMPT_LIBRARY_KEY;
+            localStorage.setItem(promptLibraryStorageKey, JSON.stringify(promptLibrary));
+            if(localOnly) return;
+            try {
+                const res = await fetch(PROMPT_LIBRARY_API, {
+                    method:'PUT',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({entries:promptLibrary})
+                });
+                if(!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if(data.owner_key) promptLibraryStorageKey = promptLibraryLocalKey(data.owner_key);
+                promptLibrary = normalizePromptLibraryItems(data.entries || promptLibrary);
+                localStorage.setItem(promptLibraryStorageKey, JSON.stringify(promptLibrary));
+            } catch(e) {
+                console.warn('Prompt library save failed, kept local fallback', e);
+            }
         }
         function promptLibraryDate(value){
             try { return new Date(value || Date.now()).toLocaleDateString(langIsEn() ? 'en-US' : 'zh-TW'); }
@@ -1484,8 +1562,8 @@
             `;
             refreshIcons();
         }
-        function openPromptLibrary(){
-            loadPromptLibrary();
+        async function openPromptLibrary(){
+            await loadPromptLibrary();
             clearPromptLibraryForm();
             const selectedPrompt = selectedPromptNode();
             if(selectedPrompt?.text?.trim()){
@@ -1509,7 +1587,7 @@
             promptLibraryText.value = node.text;
             promptLibraryText.focus();
         }
-        function savePromptLibraryEntry(){
+        async function savePromptLibraryEntry(){
             const text = (promptLibraryText?.value || '').trim();
             let name = (promptLibraryName?.value || '').trim();
             if(!text){
@@ -1527,7 +1605,7 @@
             } else {
                 promptLibrary.unshift({id:uid('pl'), name, text, updatedAt:now});
             }
-            savePromptLibrary();
+            await savePromptLibrary();
             clearPromptLibraryForm();
             renderPromptLibrary();
         }
@@ -1540,12 +1618,12 @@
             if(promptLibrarySaveBtn) promptLibrarySaveBtn.querySelector('span').textContent = '更新';
             promptLibraryName.focus();
         }
-        function deletePromptLibraryEntry(id){
+        async function deletePromptLibraryEntry(id){
             const item = promptLibrary.find(entry => entry.id === id);
             if(!item) return;
             if(!confirm(`確定刪除「${item.name || '未命名提示詞'}」？`)) return;
             promptLibrary = promptLibrary.filter(entry => entry.id !== id);
-            savePromptLibrary();
+            await savePromptLibrary();
             if(editingPromptLibraryId === id) clearPromptLibraryForm();
             renderPromptLibrary();
         }

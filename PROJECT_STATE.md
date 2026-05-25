@@ -208,3 +208,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已只同步 `static/index.html` 到 `/opt/canvas/app/static/index.html` 並執行 `docker compose up -d --build`。
   - 驗證：本地確認 `static/index.html` 只有 `<title>KIKI Studio</title>`，沒有其他 `document.title` 會覆蓋；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`，容器內 `/app/static/index.html` 第 8 行為 `<title>KIKI Studio</title>`。
+
+- 2026-05-25：修正無限畫布 API 生成停用與提示詞庫保存範圍。
+  - 原因：普通畫布前端仍把 `generator` 放在 `DISABLED_CANVAS_NODE_TYPES`，導致點 API 生成時顯示「API生成 已停用」；提示詞庫只存瀏覽器 localStorage，不適合未來多會員，也可能因瀏覽器狀態看起來像消失。
+  - 修正：重新啟用 `generator` 節點；新增 `/api/prompt-library` 讀寫 API，後端依登入會員 user id 分開保存提示詞庫；前端改為後端同步，並保留每會員分開的 localStorage 備援與舊全域 localStorage 一次性匯入。
+  - commit：待提交。
+  - 已推到 GitHub：待推送。
+  - 已部署 VPS：待部署。
+  - 驗證：待完成。

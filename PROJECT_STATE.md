@@ -204,7 +204,7 @@ curl -I https://canvas.qwenr.com/
 - 2026-05-25：修正登入後主介面瀏覽器標籤品牌名稱。
   - 原因：未登入的登入頁標籤與登入框已顯示 `kiki studio`，但登入後主介面 `static/index.html` 的 `<title>` 仍是舊的 `AI Studio`。
   - 修正：將 `static/index.html` 的 `<title>` 改為 `KIKI Studio`。
-  - commit：待提交。
-  - 已推到 GitHub：待推送。
-  - 已部署 VPS：待部署。
-  - 驗證：待完成。
+  - commit：`1f5d307 Fix main page brand title`
+  - 已推到 GitHub：是。
+  - 已部署 VPS：是，已只同步 `static/index.html` 到 `/opt/canvas/app/static/index.html` 並執行 `docker compose up -d --build`。
+  - 驗證：本地確認 `static/index.html` 只有 `<title>KIKI Studio</title>`，沒有其他 `document.title` 會覆蓋；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`，容器內 `/app/static/index.html` 第 8 行為 `<title>KIKI Studio</title>`。

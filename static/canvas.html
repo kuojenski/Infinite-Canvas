@@ -7983,6 +7983,7 @@
         // —— 一鍵運行：從目標節點反向追溯到所有上游生成節點，按拓撲順序串行執行 ——
         function runCascadeNodeByType(node, opts={}){
             const runOpts = {cascade:true, ...opts};
+            if(node.type === 'generator') return runGenerator(node.id, runOpts);
             if(node.type === 'msgen') return runMsGenNode(node.id, runOpts);
             if(node.type === 'comfy') return runComfyNode(node.id, runOpts);
             if(node.type === 'ltxDirector') return runLTXDirectorNode(node.id, runOpts);
@@ -8012,7 +8013,7 @@
             return Promise.allSettled(workers);
         }
         function canvasRunTypes(){
-            return ['msgen','comfy','ltxDirector','video'];
+            return ['generator','msgen','comfy','ltxDirector','video'];
         }
         function canvasWorkflowEdges(){
             const runTypes = canvasRunTypes();

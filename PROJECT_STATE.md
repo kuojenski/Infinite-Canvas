@@ -224,3 +224,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已同步 `VERSION` 與 `static/index.html` 到 `/opt/canvas/app/`，並用 `docker compose build --no-cache canvas-app && docker compose up -d` 強制重建，避免 Docker `COPY . /app` 快取保留舊檔。
   - 驗證：線上 `canvas-infinite-app` healthy；`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `/app/VERSION` 為 `2026.05.25.2`，`/app/static/index.html` 的 `frame-canvas` 為 `/static/canvas.html?v=2026.05.25.2`，`/app/static/canvas.html` 的 `DISABLED_CANVAS_NODE_TYPES` 只剩 `llm`。
+
+- 2026-05-25：修正 API 生成節點黑色執行按鈕按下無反應。
+  - 原因：`renderGeneratorBody()` 的黑色按鈕有呼叫 `runCanvasGenerate()`，但 `runCanvasGenerate()` 轉進的 `runCascadeNodeByType()` 漏掉 `generator` 分支，只處理 `msgen/comfy/ltxDirector/video`，所以 API 生成節點按下後會直接 resolve、不執行 `runGenerator()`。
+  - 修正：在 `runCascadeNodeByType()` 補上 `generator -> runGenerator()`，並把 `canvasRunTypes()` 補回 `generator`，讓單節點執行與一鍵流程都能辨識 API 生成節點；`VERSION` 更新為 `2026.05.25.3` 以強制前端重新載入。
+  - commit：待提交。
+  - 已推到 GitHub：待推送。
+  - 已部署 VPS：待部署。
+  - 驗證：待完成。

@@ -232,3 +232,11 @@ curl -I https://canvas.qwenr.com/
   - 已推到 GitHub：是。
   - 已部署 VPS：是，已同步 `VERSION` 與 `static/canvas.html` 到 `/opt/canvas/app/`，並用 `docker compose build --no-cache canvas-app && docker compose up -d` 強制重建。
   - 驗證：本地 `static/canvas.html` 內 2 個 script 語法檢查通過；線上 `canvas-infinite-app` healthy，`https://canvas.qwenr.com/api/health` 回 `{"ok":true,"service":"infinite-canvas"}`；容器內 `/app/VERSION` 為 `2026.05.25.3`，`frame-canvas` 載入 `/static/canvas.html?v=2026.05.25.3`，`runCascadeNodeByType()` 已包含 `generator -> runGenerator()`，`canvasRunTypes()` 已包含 `generator`。
+
+- 2026-05-25：修正 OpenRouter / Nano Banana 2 圖片回傳解析過窄。
+  - 原因：`193d8c4` 讓 OpenRouter 供應商走 `/chat/completions` 的 image modalities 路徑後，後端只解析 `message.images`、`message.content` 等少數欄位；Nano Banana 2 有可能把圖片放在 `annotations`、`attachments`、`output`、`data` 或其他巢狀欄位，導致供應商 logs 顯示已生成，但本系統報「生圖接口沒有返回圖片數據」。
+  - 修正：新增遞迴圖片欄位解析，支援 data URL、b64、常見 image/url/file 欄位與巢狀 content/parts/annotations/attachments/output/data/result；OpenRouter 解析失敗時不再讓泛用 `extract_image()` 的錯誤覆蓋真正原因，並在服務端 log 打出回應 keys / preview 方便後續定位。
+  - commit：待提交。
+  - 已推到 GitHub：待推送。
+  - 已部署 VPS：待部署。
+  - 驗證：待完成。

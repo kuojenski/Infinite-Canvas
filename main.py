@@ -1797,13 +1797,89 @@ def image_data_from_data_url(url):
     mime = meta.split(":", 1)[1] if ":" in meta else "image/png"
     return {"type": "b64", "value": encoded, "mime_type": mime}
 
+def extract_image_from_nested(value, key_hint=""):
+    """Best-effort image extractor for OpenAI-compatible providers that wrap image output differently."""
+    hint = str(key_hint or "").lower()
+    imageish_hint = any(token in hint for token in ("image", "img", "url", "uri", "file", "data", "base64", "b64"))
+
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return None
+        parsed = image_data_from_data_url(text)
+        if parsed:
+            return parsed
+        if imageish_hint and (text.startswith("http://") or text.startswith("https://") or text.startswith("/output/") or text.startswith("/assets/")):
+            return {"type": "url", "value": text}
+        if imageish_hint and len(text) > 200 and re.fullmatch(r"[A-Za-z0-9+/=\s]+", text):
+            return {"type": "b64", "value": re.sub(r"\s+", "", text), "mime_type": "image/png"}
+        data_match = re.search(r"data:image/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\s]+", text)
+        if data_match:
+            parsed = image_data_from_data_url(re.sub(r"\s+", "", data_match.group(0)))
+            if parsed:
+                return parsed
+        url_match = re.search(r"https?://[^\s<>'\")]+", text)
+        if imageish_hint and url_match:
+            return {"type": "url", "value": url_match.group(0)}
+        return None
+
+    if isinstance(value, list):
+        for item in value:
+            found = extract_image_from_nested(item, key_hint)
+            if found:
+                return found
+        return None
+
+    if not isinstance(value, dict):
+        return None
+
+    inline = value.get("inlineData") or value.get("inline_data")
+    if isinstance(inline, dict):
+        data = inline.get("data")
+        if data:
+            return {
+                "type": "b64",
+                "value": str(data),
+                "mime_type": inline.get("mimeType") or inline.get("mime_type") or "image/png",
+            }
+
+    for key in ("b64_json", "b64Json", "image_base64", "imageBase64", "base64", "data"):
+        if key in value:
+            found = extract_image_from_nested(value.get(key), key)
+            if found:
+                if found["type"] == "b64":
+                    found["mime_type"] = value.get("mimeType") or value.get("mime_type") or found.get("mime_type") or "image/png"
+                return found
+
+    for key in ("image_url", "imageUrl", "url", "uri", "fileUrl", "file_url", "download_url", "downloadUrl"):
+        if key in value:
+            found = extract_image_from_nested(value.get(key), key)
+            if found:
+                return found
+
+    priority_keys = (
+        "images", "image", "output", "outputs", "content", "parts", "annotations", "attachments",
+        "result", "results", "data", "message", "messages", "tool_calls", "toolCalls",
+    )
+    for key in priority_keys:
+        if key in value:
+            found = extract_image_from_nested(value.get(key), key)
+            if found:
+                return found
+
+    for key, nested in value.items():
+        found = extract_image_from_nested(nested, key)
+        if found:
+            return found
+    return None
+
 def extract_openrouter_image(data):
     choices = data.get("choices") if isinstance(data, dict) else None
     if not isinstance(choices, list) or not choices:
-        return None
+        return extract_image_from_nested(data)
     message = choices[0].get("message") if isinstance(choices[0], dict) else {}
     if not isinstance(message, dict):
-        return None
+        return extract_image_from_nested(data)
 
     def _pick_url(value):
         if isinstance(value, str) and value:
@@ -1868,7 +1944,7 @@ def extract_openrouter_image(data):
             if b64:
                 return b64
 
-    return None
+    return extract_image_from_nested(message) or extract_image_from_nested(choices[0]) or extract_image_from_nested(data)
 
 async def wait_for_image_task(client, task_id, provider=None):
     base_url = (provider.get("base_url") if provider else AI_BASE_URL).rstrip("/")
@@ -2719,8 +2795,12 @@ async def generate_openrouter_provider_image(prompt, size, model, reference_imag
         image = extract_openrouter_image(raw)
         if not image:
             # 兼容部分 OpenRouter 供應商透傳 OpenAI Images 風格
-            image = extract_image(raw)
+            try:
+                image = extract_image(raw)
+            except HTTPException:
+                image = None
         if not image:
+            print(f"OpenRouter image response parse failed. keys={list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__} preview={json.dumps(raw, ensure_ascii=False)[:1000] if isinstance(raw, dict) else str(raw)[:1000]}")
             raise HTTPException(
                 status_code=502,
                 detail="OpenRouter 未返回可用圖片數據。請確認模型支持 image 輸出（output_modalities 含 image）。"
